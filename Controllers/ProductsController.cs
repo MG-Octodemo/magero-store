@@ -39,15 +39,38 @@ namespace magero_store.Controllers
             return View(product);
         }
 
-        // WARNING: This is deliberately vulnerable to SQL injection!
+        /// <summary>
+        /// Busca productos en la base de datos por nombre o descripción.
+        /// </summary>
+        /// <param name="searchTerm">Término de búsqueda. No puede ser nulo ni vacío.</param>
+        /// <returns>Vista con la lista de productos encontrados.</returns>
+        /// <remarks>
+        /// Valida el parámetro recibido y utiliza consultas parametrizadas para evitar inyección SQL.
+        /// </remarks>
         public IActionResult Search(string searchTerm)
         {
-            using (var connection = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
+            // Validación del parámetro
+            if (string.IsNullOrWhiteSpace(searchTerm))
+            {
+                ModelState.AddModelError("searchTerm", "El término de búsqueda no puede estar vacío.");
+                return View("Index", new List<Product>());
+            }
+
+            // Validación de la cadena de conexión
+            var connectionString = _configuration.GetConnectionString("DefaultConnection");
+            if (string.IsNullOrWhiteSpace(connectionString))
+            {
+                ModelState.AddModelError("Connection", "No se pudo obtener la cadena de conexión a la base de datos.");
+                return View("Index", new List<Product>());
+            }
+
+            using (var connection = new SqlConnection(connectionString))
             {
                 connection.Open();
-                // Vulnerable code: Direct string concatenation in SQL query
+                // Consulta parametrizada segura
                 var sql = "SELECT * FROM Products WHERE Name LIKE @SearchTerm OR Description LIKE @SearchTerm";
-                var products = connection.Query<Product>(sql, new { SearchTerm = "%" + searchTerm + "%" }).ToList();
+                var param = new { SearchTerm = "%" + searchTerm.Trim() + "%" };
+                var products = connection.Query<Product>(sql, param).ToList();
                 return View("Index", products);
             }
         }
