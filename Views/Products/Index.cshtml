@@ -8,6 +8,24 @@
 <div class="row mb-4">
     <div class="col">
         <h1 class="display-4">Our Products</h1>
+        
+        <!-- Category Filter -->
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="categoryFilter" class="form-label">Filter by Category:</label>
+                <select id="categoryFilter" class="form-select" onchange="filterByCategory()">
+                    <option value="">All Categories</option>
+                    @if (ViewBag.Categories != null)
+                    {
+                        @foreach (var category in ViewBag.Categories as List<string>)
+                        {
+                            <option value="@category" @(ViewBag.SelectedCategory == category ? "selected" : "")>@category</option>
+                        }
+                    }
+                </select>
+            </div>
+        </div>
+
         <form asp-action="Search" asp-controller="Products" method="get" class="mb-4">
             <div class="input-group">
                 <input type="text" name="searchTerm" class="form-control" placeholder="Search products...">

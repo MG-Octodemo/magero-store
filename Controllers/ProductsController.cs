@@ -16,16 +16,34 @@ namespace magero_store.Controllers
             _configuration = configuration;
         }
 
-        public IActionResult Index(string searchTerm)
+        /// <summary>
+        /// Muestra la lista de productos con filtros opcionales por término de búsqueda y categoría.
+        /// </summary>
+        /// <param name="searchTerm">Término de búsqueda opcional.</param>
+        /// <param name="category">Categoría para filtrar productos.</param>
+        /// <returns>Vista con la lista de productos filtrados.</returns>
+        public IActionResult Index(string searchTerm, string category)
         {
-            if(string.IsNullOrEmpty(searchTerm))
+            // Validar parámetros de entrada
+            var products = SampleData.Products;
+
+            // Filtrar por categoría si se proporciona
+            if (!string.IsNullOrEmpty(category))
             {
-                return View(SampleData.Products);
+                products = products.Where(p => p.Category.Equals(category, StringComparison.OrdinalIgnoreCase)).ToList();
             }
 
-            // Simulate a search by filtering the in-memory list
-            var products = SampleData.Products;
-            products = products.Where(p => p.Description.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
+            // Filtrar por término de búsqueda si se proporciona
+            if (!string.IsNullOrEmpty(searchTerm))
+            {
+                products = products.Where(p => p.Description.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                                              p.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
+            }
+
+            // Pasar las categorías disponibles a la vista para el dropdown
+            ViewBag.Categories = SampleData.GetCategories();
+            ViewBag.SelectedCategory = category;
+
             return View(products);
         }
 
