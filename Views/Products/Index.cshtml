@@ -5,50 +5,73 @@
     Layout = "_Layout";
 }
 
-<div class="row mb-4">
-    <div class="col">
-        <h1 class="display-4">Our Products</h1>
-        <form asp-action="Search" asp-controller="Products" method="get" class="mb-4">
-            <div class="input-group">
-                <input type="text" name="searchTerm" class="form-control" placeholder="Search products...">
-                <button class="btn btn-primary" type="submit">Search</button>
+<!-- Hero Header Section -->
+<div class="hero-header">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+        <div class="container">
+            <div class="hero-text">
+                <h1 class="hero-title">Nuestra Tienda</h1>
+                <p class="hero-subtitle">Descubre una amplia selección de productos de alta calidad para todas tus necesidades</p>
+                <a href="#products-section" class="btn btn-hero">Explorar Productos</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Search Section -->
+<div class="search-section" id="products-section">
+    <div class="container">
+        <form asp-action="Search" asp-controller="Products" method="get" class="search-form">
+            <div class="search-input-group">
+                <input type="text" name="searchTerm" class="search-input" placeholder="Buscar productos...">
+                <button class="btn btn-search" type="submit">
+                    <i class="search-icon">🔍</i>
+                    Buscar
+                </button>
             </div>
         </form>
     </div>
 </div>
 
-<div class="row g-4">
-    @foreach (var product in Model)
-    {
-        <div class="col-md-3">
-            <div class="card h-100 product">
-                <div class="card-img-wrapper">
-                    <img src="@product.ImageUrl" class="card-img-top" alt="@product.Name" />
-                </div>
-                <div class="card-body">
-                    <h5 class="card-title">@product.Name</h5>
-                    <p class="card-text text-muted">@product.Description</p>
-                    <div class="mt-auto">
-                        <p class="price h4 mb-3">$@product.Price.ToString("0.00")</p>
-                        <form asp-action="AddToCart" asp-controller="Cart" method="post">
-                            <input type="hidden" name="productId" value="@product.Id" />
-                            <div class="input-group mb-3">
-                                <select name="quantity" class="form-select">
-                                    @for (int i = 1; i <= 10; i++)
-                                    {
-                                        <option value="@i">@i</option>
-                                    }
-                                </select>
-                                <button type="submit" class="btn btn-warning">Add to Cart</button>
+<!-- Products Grid Section -->
+<div class="products-section">
+    <div class="container">
+        <h2 class="section-heading">Nuestros Productos</h2>
+        <div class="products-grid">
+            @foreach (var product in Model)
+            {
+                <div class="product-card">
+                    <div class="product-image-wrapper">
+                        <img src="@product.ImageUrl" class="product-image" alt="@product.Name" />
+                    </div>
+                    <div class="product-content">
+                        <h3 class="product-title">@product.Name</h3>
+                        <p class="product-description">@product.Description</p>
+                        <div class="product-actions">
+                            <p class="product-price">$@product.Price.ToString("0.00")</p>
+                            <div class="product-buttons">
+                                <form asp-action="AddToCart" asp-controller="Cart" method="post" class="add-to-cart-form">
+                                    <input type="hidden" name="productId" value="@product.Id" />
+                                    <div class="quantity-group">
+                                        <select name="quantity" class="quantity-select">
+                                            @for (int i = 1; i <= 10; i++)
+                                            {
+                                                <option value="@i">@i</option>
+                                            }
+                                        </select>
+                                        <button type="submit" class="btn btn-add-cart">Agregar al Carrito</button>
+                                    </div>
+                                </form>
+                                <a href="@Url.Action("Details", "Products", new { id = product.Id })" 
+                                   class="btn btn-view-details">Ver Detalles</a>
                             </div>
-                        </form>
-                        <a href="@Url.Action("Details", "Products", new { id = product.Id })" 
-                           class="btn btn-primary w-100">View Details</a>
+                        </div>
                     </div>
                 </div>
-            </div>
+            }
         </div>
-    }
+    </div>
 </div>
 
 @section Scripts {

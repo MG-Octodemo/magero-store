@@ -1,20 +1,362 @@
 body {
-    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #f8f9fa;
+    background-color: #ffffff;
     padding-top: 76px; /* Adjust padding to prevent content from being hidden behind the fixed header */
+    line-height: 1.5;
+    scroll-behavior: smooth;
+}
+
+/* Hero Header Section */
+.hero-header {
+    position: relative;
+    height: 720px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 720"><defs><linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:%23667eea;stop-opacity:1" /><stop offset="100%" style="stop-color:%23764ba2;stop-opacity:1" /></linearGradient></defs><rect width="1440" height="720" fill="url(%23bg)"/></svg>');
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.24);
+    z-index: 1;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    color: white;
+    max-width: 844px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.hero-title {
+    font-size: 4rem;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -2%;
+    margin-bottom: 16px;
+    color: #ffffff;
+}
+
+.hero-subtitle {
+    font-size: 1.5rem;
+    font-weight: 500;
+    line-height: 1.4;
+    margin-bottom: 40px;
+    color: #ffffff;
+    opacity: 0.95;
+}
+
+.btn-hero {
+    background-color: #000000;
+    color: #ffffff;
+    padding: 20px 32px;
+    font-size: 1.5rem;
+    font-weight: 500;
+    border: none;
+    border-radius: 8px;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.2s ease;
+    box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);
+}
+
+.btn-hero:hover {
+    background-color: #333333;
+    transform: translateY(-2px);
+    box-shadow: 0px 4px 12px 0px rgba(0, 0, 0, 0.15);
+    color: #ffffff;
+    text-decoration: none;
+}
+
+/* Search Section */
+.search-section {
+    padding: 80px 0;
+    background-color: #ffffff;
+}
+
+.search-form {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.search-input-group {
+    display: flex;
+    gap: 0;
+    border-radius: 8px;
+    box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    border: 1px solid #e0e0e0;
+}
+
+.search-input {
+    flex: 1;
+    padding: 16px 20px;
+    border: none;
+    font-size: 1rem;
+    outline: none;
+    background-color: #ffffff;
+}
+
+.search-input::placeholder {
+    color: #828282;
+}
+
+.btn-search {
+    background-color: #000000;
+    color: #ffffff;
+    padding: 16px 24px;
+    border: none;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background-color 0.2s ease;
+}
+
+.btn-search:hover {
+    background-color: #333333;
+}
+
+.search-icon {
+    font-size: 1rem;
+}
+
+/* Products Section */
+.products-section {
+    padding: 80px 0;
+    background-color: #ffffff;
+}
+
+.section-heading {
+    font-size: 3rem;
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -2%;
+    text-align: center;
+    margin-bottom: 60px;
+    color: #000000;
+}
+
+.products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 32px;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Product Cards */
+.product-card {
+    background-color: #ffffff;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: all 0.2s ease;
+    box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.product-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0px 8px 24px 0px rgba(0, 0, 0, 0.1);
+}
+
+.product-image-wrapper {
+    background-color: #f7f7f7;
+    height: 280px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+}
+
+.product-image {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.product-content {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.product-title {
+    font-size: 1.5rem;
+    font-weight: 500;
+    line-height: 1.5;
+    margin-bottom: 8px;
+    color: #000000;
+}
+
+.product-description {
+    font-size: 1.25rem;
+    line-height: 1.5;
+    color: #828282;
+    margin-bottom: 24px;
+    flex-grow: 1;
+}
+
+.product-actions {
+    margin-top: auto;
+}
+
+.product-price {
+    font-size: 1.25rem;
+    font-weight: 500;
+    line-height: 1.5;
+    color: #000000;
+    margin-bottom: 24px;
+}
+
+.product-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.add-to-cart-form {
+    margin: 0;
+}
+
+.quantity-group {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.quantity-select {
+    padding: 12px 16px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 1rem;
+    background-color: #ffffff;
+    min-width: 80px;
+}
+
+.btn-add-cart {
+    background-color: #000000;
+    color: #ffffff;
+    padding: 14px 24px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    flex: 1;
+    transition: all 0.2s ease;
+    box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);
+}
+
+.btn-add-cart:hover {
+    background-color: #333333;
+    transform: translateY(-1px);
+    box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.1);
+}
+
+.btn-view-details {
+    background-color: #e6e6e6;
+    color: #000000;
+    padding: 14px 24px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 500;
+    text-decoration: none;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);
+    display: block;
+}
+
+.btn-view-details:hover {
+    background-color: #d0d0d0;
+    transform: translateY(-1px);
+    box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.1);
+    text-decoration: none;
+    color: #000000;
+}
+
+/* Container */
+.container {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 0 80px;
+}
+
+@media (max-width: 1200px) {
+    .container {
+        padding: 0 40px;
+    }
+    
+    .products-grid {
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 24px;
+    }
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 0 20px;
+    }
+    
+    .hero-title {
+        font-size: 2.5rem;
+    }
+    
+    .hero-subtitle {
+        font-size: 1.25rem;
+    }
+    
+    .section-heading {
+        font-size: 2rem;
+    }
+    
+    .products-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .search-input-group {
+        flex-direction: column;
+    }
+    
+    .quantity-group {
+        flex-direction: column;
+    }
 }
 
 header {
-    background-color: #232f3e;
-    color: white;
+    background-color: #ffffff;
+    color: #000000;
     padding: 10px 20px;
     text-align: center;
     position: fixed;
     width: 100%;
     top: 0;
     z-index: 1000;
+    box-shadow: 0 2px 4px rgba(0,0,0,.1);
 }
 
 .navbar {
@@ -24,6 +366,7 @@ header {
 .navbar-brand {
     font-weight: 600;
     font-size: 1.5rem;
+    color: #000000;
 }
 
 nav {
@@ -31,24 +374,20 @@ nav {
 }
 
 nav a {
-    color: white;
+    color: #000000;
     text-decoration: none;
     margin: 0 15px;
+    font-weight: 500;
 }
 
 nav a:hover {
     text-decoration: underline;
 }
 
-.container {
-    width: 80%;
-    margin: auto;
-    overflow: hidden;
-}
-
+/* Legacy styles for other pages - keeping for compatibility */
 .product-list {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));  /* Slightly wider cards */
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 20px;
     padding: 20px;
     max-width: 1500px;
@@ -58,8 +397,8 @@ nav a:hover {
 
 .card-img-top {
     width: 100%;
-    height: 200px;  /* Fixed height instead of viewport units */
-    object-fit: contain;  /* Maintain aspect ratio */
+    height: 200px;
+    object-fit: contain;
     padding: 1rem;
     background-color: #fff;
 }
@@ -85,7 +424,7 @@ nav a:hover {
     transition: transform 0.2s, box-shadow 0.2s;
     border: none;
     box-shadow: 0 2px 4px rgba(0,0,0,.05);
-    height: 100%;  /* Ensure all cards have same height */
+    height: 100%;
     display: flex;
     flex-direction: column;
 }
@@ -128,11 +467,13 @@ nav a:hover {
 
 .btn {
     font-weight: 500;
-    text-transform: uppercase;
     font-size: 0.875rem;
     letter-spacing: 0.5px;
+    border-radius: 8px;
+    transition: all 0.2s ease;
 }
 
+/* Legacy button styles - keeping for other pages */
 .btn-primary {
     background-color: #FFD814;
     border: 1px solid #FCD200;
