@@ -16,17 +16,31 @@ namespace magero_store.Controllers
             _configuration = configuration;
         }
 
-        public IActionResult Index(string searchTerm)
+        /// <summary>
+        /// Muestra la lista de productos con filtros opcionales de búsqueda por texto y precio.
+        /// </summary>
+        /// <param name="searchTerm">Término de búsqueda para filtrar productos por descripción.</param>
+        /// <param name="priceFilter">Filtro de precio: 'low', 'med' o 'high'.</param>
+        /// <returns>Vista con la lista de productos filtrados.</returns>
+        public IActionResult Index(string? searchTerm, string? priceFilter)
         {
-            if(string.IsNullOrEmpty(searchTerm))
+            // Validar parámetros y obtener productos base
+            var products = SampleData.Products.AsEnumerable();
+
+            // Aplicar filtro de búsqueda por texto si se proporciona
+            if (!string.IsNullOrEmpty(searchTerm))
             {
-                return View(SampleData.Products);
+                products = products.Where(p => p.Description.Contains(searchTerm, StringComparison.OrdinalIgnoreCase));
             }
 
-            // Simulate a search by filtering the in-memory list
-            var products = SampleData.Products;
-            products = products.Where(p => p.Description.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
-            return View(products);
+            // Aplicar filtro de precio usando el helper reutilizable
+            products = PriceRange.ApplyPriceFilter(products, priceFilter);
+
+            // Mantener los valores de filtro para la vista
+            ViewBag.SearchTerm = searchTerm;
+            ViewBag.PriceFilter = priceFilter;
+
+            return View(products.ToList());
         }
 
         public IActionResult Details(int id)
@@ -39,8 +53,14 @@ namespace magero_store.Controllers
             return View(product);
         }
 
-        // WARNING: This is deliberately vulnerable to SQL injection!
-        public IActionResult Search(string searchTerm)
+        /// <summary>
+        /// Realiza búsqueda de productos con filtros de texto y precio usando consulta SQL.
+        /// ADVERTENCIA: Este método contiene una vulnerabilidad deliberada de inyección SQL para propósitos de demostración.
+        /// </summary>
+        /// <param name="searchTerm">Término de búsqueda para filtrar productos.</param>
+        /// <param name="priceFilter">Filtro de precio: 'low', 'med' o 'high'.</param>
+        /// <returns>Vista con productos filtrados.</returns>
+        public IActionResult Search(string? searchTerm, string? priceFilter)
         {
             using (var connection = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
             {
@@ -48,7 +68,15 @@ namespace magero_store.Controllers
                 // Vulnerable code: Direct string concatenation in SQL query
                 var sql = "SELECT * FROM Products WHERE Name LIKE @SearchTerm OR Description LIKE @SearchTerm";
                 var products = connection.Query<Product>(sql, new { SearchTerm = "%" + searchTerm + "%" }).ToList();
-                return View("Index", products);
+                
+                // Aplicar filtro de precio a los resultados de la consulta SQL
+                var filteredProducts = PriceRange.ApplyPriceFilter(products, priceFilter);
+                
+                // Mantener los valores de filtro para la vista
+                ViewBag.SearchTerm = searchTerm;
+                ViewBag.PriceFilter = priceFilter;
+                
+                return View("Index", filteredProducts.ToList());
             }
         }
     }
