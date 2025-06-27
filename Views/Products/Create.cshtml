@@ -1,0 +1,60 @@
+@model magero_store.ViewModels.ProductViewModel
+
+@{
+    ViewData["Title"] = "Crear Producto";
+    Layout = "_Layout";
+}
+
+<h2>Crear Nuevo Producto</h2>
+
+<form asp-action="Create" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    
+    <div class="form-group mb-3">
+        <label asp-for="Name" class="form-label">Nombre</label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mb-3">
+        <label asp-for="Description" class="form-label">Descripción</label>
+        <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mb-3">
+        <label asp-for="Price" class="form-label">Precio</label>
+        <input asp-for="Price" class="form-control" type="number" step="0.01" min="0.01" />
+        <span asp-validation-for="Price" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mb-3">
+        <label asp-for="ImageUrl" class="form-label">URL de Imagen</label>
+        <input asp-for="ImageUrl" class="form-control" type="url" />
+        <span asp-validation-for="ImageUrl" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mb-3">
+        <label asp-for="Color" class="form-label">Color</label>
+        <select asp-for="Color" class="form-select">
+            <option value="">Seleccionar color...</option>
+            @if (ViewBag.AvailableColors is string[] availableColors)
+            {
+                @foreach (var color in availableColors)
+                {
+                    <option value="@color">@color</option>
+                }
+            }
+        </select>
+        <span asp-validation-for="Color" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary">Crear Producto</button>
+        <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+    </div>
+</form>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
