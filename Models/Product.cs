@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using magero_store.Helpers;
 
 namespace magero_store.Models
 {
@@ -33,6 +34,13 @@ namespace magero_store.Models
         /// URL de la imagen del producto.
         /// </summary>
         public string ImageUrl { get; set; }
+
+        /// <summary>
+        /// Color del producto.
+        /// </summary>
+        [Required(ErrorMessage = "El color es requerido.")]
+        [ValidColor]
+        public string Color { get; set; }
 
     }
 }
