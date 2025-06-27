@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using magero_store.Models;
 using magero_store.Data;
+using magero_store.ViewModels;
 using Microsoft.Data.SqlClient;  // Changed from System.Data.SqlClient
 using Dapper;
 using System.Linq;
@@ -16,17 +17,39 @@ namespace magero_store.Controllers
             _configuration = configuration;
         }
 
-        public IActionResult Index(string searchTerm)
+        /// <summary>
+        /// Muestra la lista de productos, con soporte para filtrado por búsqueda y categoría.
+        /// </summary>
+        /// <param name="searchTerm">Término de búsqueda para filtrar productos por descripción.</param>
+        /// <param name="category">Categoría para filtrar los productos.</param>
+        /// <returns>Vista con la lista de productos filtrados.</returns>
+        public IActionResult Index(string searchTerm, string category)
         {
-            if(string.IsNullOrEmpty(searchTerm))
+            // Validar parámetros de entrada
+            var products = SampleData.Products.AsEnumerable();
+
+            // Filtrar por categoría si se especifica
+            if (!string.IsNullOrEmpty(category))
             {
-                return View(SampleData.Products);
+                products = products.Where(p => p.Category.Equals(category, StringComparison.OrdinalIgnoreCase));
             }
 
-            // Simulate a search by filtering the in-memory list
-            var products = SampleData.Products;
-            products = products.Where(p => p.Description.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
-            return View(products);
+            // Filtrar por término de búsqueda si se especifica
+            if (!string.IsNullOrEmpty(searchTerm))
+            {
+                products = products.Where(p => p.Description.Contains(searchTerm, StringComparison.OrdinalIgnoreCase));
+            }
+
+            // Crear ViewModel con productos y categorías
+            var viewModel = new ProductIndexViewModel
+            {
+                Products = products.ToList(),
+                Categories = Categories.GetAllCategories(),
+                SelectedCategory = category,
+                SearchTerm = searchTerm
+            };
+
+            return View(viewModel);
         }
 
         public IActionResult Details(int id)
