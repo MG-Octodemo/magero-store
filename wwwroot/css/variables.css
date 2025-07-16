@@ -1,0 +1,123 @@
+/* ==============================================
+   Variables CSS - Sistema de variables de diseño
+   Implementa el nuevo diseño basado en Figma
+   ============================================== */
+
+:root {
+  /* === Colores Principales === */
+  --color-primary: #000000;
+  --color-primary-light: rgba(0, 0, 0, 0.75);
+  --color-white: #FFFFFF;
+  --color-background: #F8F9FA;
+  
+  /* === Colores de Texto === */
+  --color-text-primary: #000000;
+  --color-text-secondary: #828282;
+  --color-text-muted: #454545;
+  --color-text-white: #FFFFFF;
+  
+  /* === Colores de Acción === */
+  --color-button-primary: #000000;
+  --color-button-secondary: #E6E6E6;
+  --color-button-border: #FFFFFF;
+  
+  /* === Overlays y Fondos === */
+  --color-overlay-dark: rgba(0, 0, 0, 0.24);
+  --color-card-background: #FFFFFF;
+  --color-border: #E6E6E6;
+  --color-border-light: #E0E0E0;
+  
+  /* === Tipografía === */
+  --font-family-primary: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  
+  /* Tamaños de fuente según Figma */
+  --font-size-hero-title: 4rem; /* 64px */
+  --font-size-section-title: 3rem; /* 48px */
+  --font-size-large-title: 2.5rem; /* 40px */
+  --font-size-subtitle: 1.5rem; /* 24px */
+  --font-size-product-title: 1.5rem; /* 24px */
+  --font-size-body: 1.25rem; /* 20px */
+  --font-size-base: 1rem; /* 16px */
+  --font-size-small: 0.875rem; /* 14px */
+  
+  /* Pesos de fuente */
+  --font-weight-bold: 700;
+  --font-weight-semibold: 600;
+  --font-weight-medium: 500;
+  --font-weight-regular: 400;
+  
+  /* Alturas de línea */
+  --line-height-tight: 1.2;
+  --line-height-normal: 1.4;
+  --line-height-relaxed: 1.5;
+  
+  /* === Espaciado === */
+  --space-xs: 0.5rem; /* 8px */
+  --space-sm: 1rem; /* 16px */
+  --space-md: 1.5rem; /* 24px */
+  --space-lg: 2rem; /* 32px */
+  --space-xl: 2.5rem; /* 40px */
+  --space-2xl: 3rem; /* 48px */
+  --space-3xl: 4rem; /* 64px */
+  --space-4xl: 5rem; /* 80px */
+  
+  /* === Radios de borde === */
+  --border-radius-sm: 4px;
+  --border-radius-md: 8px;
+  --border-radius-lg: 12px;
+  
+  /* === Sombras === */
+  --shadow-sm: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 2px 4px rgba(0,0,0,.1);
+  --shadow-lg: 0 4px 12px rgba(0,0,0,.15);
+  --shadow-card-hover: 0 4px 12px rgba(0,0,0,.1);
+  
+  /* === Transiciones === */
+  --transition-base: 0.2s ease;
+  --transition-slow: 0.3s ease;
+  
+  /* === Z-Index === */
+  --z-navbar: 1000;
+  --z-dropdown: 1010;
+  --z-modal: 1020;
+  --z-hero-overlay: 10;
+  
+  /* === Breakpoints === */
+  --bp-sm: 576px;
+  --bp-md: 768px;
+  --bp-lg: 992px;
+  --bp-xl: 1200px;
+  --bp-2xl: 1400px;
+  
+  /* === Tamaños de contenedor === */
+  --container-sm: 540px;
+  --container-md: 720px;
+  --container-lg: 960px;
+  --container-xl: 1140px;
+  --container-2xl: 1320px;
+  
+  /* === Grid y Layout === */
+  --grid-gap: var(--space-lg);
+  --grid-gap-sm: var(--space-md);
+  --card-padding: var(--space-md);
+  --section-padding: var(--space-4xl);
+  --section-padding-sm: var(--space-2xl);
+}
+
+/* === Responsive Font Sizes === */
+@media (max-width: 768px) {
+  :root {
+    --font-size-hero-title: 2.5rem; /* 40px en móvil */
+    --font-size-section-title: 2rem; /* 32px en móvil */
+    --font-size-large-title: 1.75rem; /* 28px en móvil */
+    --section-padding: var(--space-2xl);
+  }
+}
+
+@media (max-width: 576px) {
+  :root {
+    --font-size-hero-title: 2rem; /* 32px en móvil pequeño */
+    --font-size-section-title: 1.5rem; /* 24px en móvil pequeño */
+    --section-padding: var(--space-md);
+  }
+}
