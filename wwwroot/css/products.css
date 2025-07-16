@@ -117,11 +117,16 @@
   border-radius: var(--border-radius-sm);
   font-size: var(--font-size-base);
   background-color: var(--color-card-background);
+  max-width: 60px;
 }
 
 .quantity-selector .btn-warning {
   flex: 1;
-  min-width: 0;
+  min-width: 120px;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .product-details-link {
@@ -220,6 +225,13 @@
   .product-content {
     padding: var(--space-sm);
   }
+  
+  /* Improved button sizing for tablets */
+  .quantity-selector .btn-warning {
+    padding: 10px 14px;
+    font-size: 14px;
+    min-width: 100px;
+  }
 }
 
 @media (max-width: 576px) {
@@ -240,5 +252,13 @@
   .quantity-selector select,
   .quantity-selector .btn-warning {
     width: 100%;
+    max-width: 100%;
+  }
+  
+  /* Ensure button text fits on very small screens */
+  .quantity-selector .btn-warning {
+    padding: 10px 12px;
+    font-size: 14px;
+    min-height: 40px;
   }
 }

@@ -77,7 +77,10 @@
   background-color: #ffc107;
   color: #000;
   font-size: var(--font-size-base);
-  padding: 14px 24px;
+  padding: 12px 16px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 
 .btn-warning:hover {
