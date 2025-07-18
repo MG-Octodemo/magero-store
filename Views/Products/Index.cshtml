@@ -1,38 +1,93 @@
 @using magero_store.Models
 @model IEnumerable<Product>
 @{
-    ViewData["Title"] = "Products";
+    ViewData["Title"] = "Shop";
     Layout = "_Layout";
 }
 
-<div class="row mb-4">
-    <div class="col">
-        <h1 class="display-4">Our Products</h1>
-        <form asp-action="Search" asp-controller="Products" method="get" class="mb-4">
-            <div class="input-group">
-                <input type="text" name="searchTerm" class="form-control" placeholder="Search products...">
+<!-- Hero Section -->
+<section class="hero-section" style="background-image: url('https://images.unsplash.com/photo-1441986300917-64674bd600d8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80');">
+    <div class="hero-content">
+        <div class="mb-md">
+            <h1 class="hero-title text-white">Shop title</h1>
+            <p class="hero-subtitle subtitle text-white">Subheading with description of your shopping site</p>
+        </div>
+        <div class="hero-buttons">
+            <a href="#products" class="btn btn-primary btn-large">Shop Now</a>
+        </div>
+    </div>
+</section>
+
+<!-- Search Section -->
+<div class="container-modern">
+    <div class="mt-2xl mb-xl">
+        <form asp-action="Search" asp-controller="Products" method="get" class="flex justify-center">
+            <div class="flex gap-sm" style="max-width: 500px; width: 100%;">
+                <input type="text" name="searchTerm" class="form-control" placeholder="Search products..." style="flex: 1; padding: 12px 16px; border: 1px solid var(--color-border-light); border-radius: var(--border-radius-md);">
                 <button class="btn btn-primary" type="submit">Search</button>
             </div>
         </form>
     </div>
 </div>
 
-<div class="row g-4">
-    @foreach (var product in Model)
-    {
-        <div class="col-md-3">
-            <div class="card h-100 product">
-                <div class="card-img-wrapper">
-                    <img src="@product.ImageUrl" class="card-img-top" alt="@product.Name" />
+<!-- Section Heading -->
+<div id="products" class="container-modern">
+    <h2 class="section-title text-center mb-2xl">Featured Products</h2>
+</div>
+
+<!-- Products Grid -->
+<div class="container-wide">
+    <div class="products-grid">
+        @{
+            var productList = Model.ToList();
+            var featuredProduct = productList.FirstOrDefault();
+            var otherProducts = productList.Skip(1).ToList();
+        }
+        
+        @if (featuredProduct != null)
+        {
+            <div class="product-card featured">
+                <div class="product-image-wrapper">
+                    <img src="@featuredProduct.ImageUrl" class="product-image" alt="@featuredProduct.Name" />
                 </div>
-                <div class="card-body">
-                    <h5 class="card-title">@product.Name</h5>
-                    <p class="card-text text-muted">@product.Description</p>
-                    <div class="mt-auto">
-                        <p class="price h4 mb-3">$@product.Price.ToString("0.00")</p>
+                <div class="product-content">
+                    <h3 class="product-name">@featuredProduct.Name</h3>
+                    <p class="product-description">@featuredProduct.Description</p>
+                    <p class="product-price">$@featuredProduct.Price.ToString("0.00")</p>
+                    <div class="product-actions">
+                        <form asp-action="AddToCart" asp-controller="Cart" method="post">
+                            <input type="hidden" name="productId" value="@featuredProduct.Id" />
+                            <div class="quantity-selector">
+                                <select name="quantity" class="form-select">
+                                    @for (int i = 1; i <= 10; i++)
+                                    {
+                                        <option value="@i">@i</option>
+                                    }
+                                </select>
+                                <button type="submit" class="btn btn-warning">Add to Cart</button>
+                            </div>
+                        </form>
+                        <a href="@Url.Action("Details", "Products", new { id = featuredProduct.Id })" 
+                           class="product-details-link">View Details</a>
+                    </div>
+                </div>
+            </div>
+        }
+        
+        @foreach (var product in otherProducts)
+        {
+            <div class="product-card">
+                <div class="product-image-wrapper">
+                    <img src="@product.ImageUrl" class="product-image" alt="@product.Name" />
+                </div>
+                <div class="product-content">
+                    <h3 class="product-name">@product.Name</h3>
+                    <p class="product-description">@product.Description</p>
+                    <p class="product-price">$@product.Price.ToString("0.00")</p>
+                    <div class="product-actions">
                         <form asp-action="AddToCart" asp-controller="Cart" method="post">
                             <input type="hidden" name="productId" value="@product.Id" />
-                            <div class="input-group mb-3">
+                            <div class="quantity-selector">
                                 <select name="quantity" class="form-select">
                                     @for (int i = 1; i <= 10; i++)
                                     {
@@ -43,12 +98,12 @@
                             </div>
                         </form>
                         <a href="@Url.Action("Details", "Products", new { id = product.Id })" 
-                           class="btn btn-primary w-100">View Details</a>
+                           class="product-details-link">View Details</a>
                     </div>
                 </div>
             </div>
-        </div>
-    }
+        }
+    </div>
 </div>
 
 @section Scripts {
@@ -57,5 +112,18 @@
             var category = document.getElementById('categoryFilter').value;
             window.location.href = '/Products/Index' + (category ? '?category=' + category : '');
         }
+        
+        // Smooth scroll for hero button
+        document.addEventListener('DOMContentLoaded', function() {
+            const shopNowBtn = document.querySelector('a[href="#products"]');
+            if (shopNowBtn) {
+                shopNowBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    document.getElementById('products').scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                });
+            }
+        });
     </script>
 }
