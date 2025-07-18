@@ -8,10 +8,47 @@
 <div class="row mb-4">
     <div class="col">
         <h1 class="display-4">Our Products</h1>
-        <form asp-action="Search" asp-controller="Products" method="get" class="mb-4">
-            <div class="input-group">
-                <input type="text" name="searchTerm" class="form-control" placeholder="Search products...">
-                <button class="btn btn-primary" type="submit">Search</button>
+        
+        <!-- Formulario principal de filtros -->
+        <form asp-action="Index" asp-controller="Products" method="get" class="mb-4">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <input type="text" name="searchTerm" class="form-control" placeholder="Search products..." value="@ViewBag.SearchTerm">
+                        <button class="btn btn-primary" type="submit">Search</button>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <select name="priceFilter" class="form-select" onchange="this.form.submit()">
+                        <option value="">All Prices</option>
+                        <option value="low" @(ViewBag.PriceFilter == "low" ? "selected" : "")>Low ($0 - $99.99)</option>
+                        <option value="med" @(ViewBag.PriceFilter == "med" ? "selected" : "")>Medium ($100 - $299.99)</option>
+                        <option value="high" @(ViewBag.PriceFilter == "high" ? "selected" : "")>High ($300+)</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <button type="button" class="btn btn-secondary w-100" onclick="clearFilters()">Clear Filters</button>
+                </div>
+            </div>
+        </form>
+        
+        <!-- Formulario de búsqueda SQL (mantener funcionalidad existente) -->
+        <form asp-action="Search" asp-controller="Products" method="get" class="mb-2">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <input type="text" name="searchTerm" class="form-control" placeholder="SQL Search products..." value="@ViewBag.SearchTerm">
+                        <button class="btn btn-warning" type="submit">SQL Search</button>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <select name="priceFilter" class="form-select">
+                        <option value="">All Prices</option>
+                        <option value="low" @(ViewBag.PriceFilter == "low" ? "selected" : "")>Low ($0 - $99.99)</option>
+                        <option value="med" @(ViewBag.PriceFilter == "med" ? "selected" : "")>Medium ($100 - $299.99)</option>
+                        <option value="high" @(ViewBag.PriceFilter == "high" ? "selected" : "")>High ($300+)</option>
+                    </select>
+                </div>
             </div>
         </form>
     </div>
@@ -56,6 +93,10 @@
         function filterByCategory() {
             var category = document.getElementById('categoryFilter').value;
             window.location.href = '/Products/Index' + (category ? '?category=' + category : '');
+        }
+        
+        function clearFilters() {
+            window.location.href = '/Products/Index';
         }
     </script>
 }
