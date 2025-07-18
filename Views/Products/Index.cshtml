@@ -5,57 +5,167 @@
     Layout = "_Layout";
 }
 
-<div class="row mb-4">
-    <div class="col">
-        <h1 class="display-4">Our Products</h1>
-        <form asp-action="Search" asp-controller="Products" method="get" class="mb-4">
-            <div class="input-group">
-                <input type="text" name="searchTerm" class="form-control" placeholder="Search products...">
-                <button class="btn btn-primary" type="submit">Search</button>
-            </div>
-        </form>
+<!-- Hero Section -->
+<div class="hero-section">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h1 class="hero-title">Explora Nuestra Colección</h1>
+            <p class="hero-subtitle">Descubre productos excepcionales seleccionados especialmente para ti</p>
+        </div>
     </div>
 </div>
 
-<div class="row g-4">
-    @foreach (var product in Model)
-    {
-        <div class="col-md-3">
-            <div class="card h-100 product">
-                <div class="card-img-wrapper">
-                    <img src="@product.ImageUrl" class="card-img-top" alt="@product.Name" />
-                </div>
-                <div class="card-body">
-                    <h5 class="card-title">@product.Name</h5>
-                    <p class="card-text text-muted">@product.Description</p>
-                    <div class="mt-auto">
-                        <p class="price h4 mb-3">$@product.Price.ToString("0.00")</p>
-                        <form asp-action="AddToCart" asp-controller="Cart" method="post">
-                            <input type="hidden" name="productId" value="@product.Id" />
-                            <div class="input-group mb-3">
-                                <select name="quantity" class="form-select">
-                                    @for (int i = 1; i <= 10; i++)
-                                    {
-                                        <option value="@i">@i</option>
-                                    }
-                                </select>
-                                <button type="submit" class="btn btn-warning">Add to Cart</button>
-                            </div>
-                        </form>
-                        <a href="@Url.Action("Details", "Products", new { id = product.Id })" 
-                           class="btn btn-primary w-100">View Details</a>
-                    </div>
+<!-- Filters Section -->
+<div class="filters-section">
+    <div class="container">
+        <div class="row g-3 align-items-center">
+            <div class="col-md-4">
+                <div class="filter-group">
+                    <label for="categoryFilter" class="filter-label">Categoría</label>
+                    <select id="categoryFilter" class="form-select filter-select" onchange="filterByCategory()">
+                        <option value="">Todas las categorías</option>
+                        <option value="electronics">Electrónicos</option>
+                        <option value="clothing">Ropa</option>
+                        <option value="books">Libros</option>
+                        <option value="appliances">Electrodomésticos</option>
+                    </select>
                 </div>
             </div>
+            <div class="col-md-4">
+                <div class="filter-group">
+                    <label for="priceFilter" class="filter-label">Rango de Precio</label>
+                    <select id="priceFilter" class="form-select filter-select">
+                        <option value="">Todos los precios</option>
+                        <option value="0-50">$0 - $50</option>
+                        <option value="51-100">$51 - $100</option>
+                        <option value="101-200">$101 - $200</option>
+                        <option value="201+">$201+</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <form asp-action="Search" asp-controller="Products" method="get" class="filter-group">
+                    <label for="searchInput" class="filter-label">Buscar</label>
+                    <div class="search-container">
+                        <input type="text" id="searchInput" name="searchTerm" class="form-control search-input" 
+                               placeholder="Buscar productos...">
+                        <button class="search-btn" type="submit">
+                            <i class="search-icon">🔍</i>
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
-    }
+    </div>
+</div>
+
+<!-- Products Grid -->
+<div class="products-section">
+    <div class="container">
+        <div class="products-grid">
+            @foreach (var product in Model)
+            {
+                <div class="product-card">
+                    <div class="product-image-container">
+                        <img src="@product.ImageUrl" class="product-image" alt="@product.Name" 
+                             onerror="this.src='/images/placeholder-product.jpg'" />
+                        <div class="product-badge">Nuevo</div>
+                    </div>
+                    <div class="product-content">
+                        <h3 class="product-title">@product.Name</h3>
+                        <p class="product-description">@product.Description</p>
+                        <div class="product-price-section">
+                            <span class="product-price">$@product.Price.ToString("0.00")</span>
+                        </div>
+                        <div class="product-actions">
+                            <form asp-action="AddToCart" asp-controller="Cart" method="post" class="add-to-cart-form">
+                                <input type="hidden" name="productId" value="@product.Id" />
+                                <div class="quantity-selector">
+                                    <label for="quantity-@product.Id" class="quantity-label">Cantidad:</label>
+                                    <select name="quantity" id="quantity-@product.Id" class="quantity-select">
+                                        @for (int i = 1; i <= 10; i++)
+                                        {
+                                            <option value="@i">@i</option>
+                                        }
+                                    </select>
+                                </div>
+                                <button type="submit" class="btn-add-to-cart">
+                                    <span class="btn-text">Agregar al Carrito</span>
+                                </button>
+                            </form>
+                            <a href="@Url.Action("Details", "Products", new { id = product.Id })" 
+                               class="btn-view-details">Ver Detalles</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
 </div>
 
 @section Scripts {
     <script>
+        // Filter functionality
         function filterByCategory() {
             var category = document.getElementById('categoryFilter').value;
-            window.location.href = '/Products/Index' + (category ? '?category=' + category : '');
+            var priceRange = document.getElementById('priceFilter').value;
+            
+            var url = '/Products/Index';
+            var params = [];
+            
+            if (category) params.push('category=' + encodeURIComponent(category));
+            if (priceRange) params.push('priceRange=' + encodeURIComponent(priceRange));
+            
+            if (params.length > 0) {
+                url += '?' + params.join('&');
+            }
+            
+            window.location.href = url;
         }
+
+        // Price filter change handler
+        document.getElementById('priceFilter').addEventListener('change', filterByCategory);
+
+        // Enhanced product interactions
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add hover effects for product cards
+            const productCards = document.querySelectorAll('.product-card');
+            productCards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-8px)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                });
+            });
+
+            // Add to cart animation
+            const addToCartButtons = document.querySelectorAll('.btn-add-to-cart');
+            addToCartButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    // Add loading state
+                    this.classList.add('loading');
+                    this.innerHTML = '<span class="btn-text">Agregando...</span>';
+                    
+                    // Reset after form submission
+                    setTimeout(() => {
+                        this.classList.remove('loading');
+                        this.innerHTML = '<span class="btn-text">Agregar al Carrito</span>';
+                    }, 2000);
+                });
+            });
+
+            // Search input enhancement
+            const searchInput = document.getElementById('searchInput');
+            searchInput.addEventListener('input', function() {
+                if (this.value.length > 2) {
+                    // Could implement live search here
+                    this.classList.add('has-value');
+                } else {
+                    this.classList.remove('has-value');
+                }
+            });
+        });
     </script>
 }
