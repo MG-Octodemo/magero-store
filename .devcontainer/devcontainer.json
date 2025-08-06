@@ -1,5 +1,5 @@
 {
-  "name": "C# (.NET 9.0) Dev Container",
+  "name": "C# (.NET 8.0) Dev Container",
   "image": "mcr.microsoft.com/dotnet/sdk:8.0",
   "features": {},
   "customizations": {
@@ -7,11 +7,11 @@
       "extensions": [
         "ms-dotnettools.csharp",
         "ms-dotnettools.vscode-dotnet-runtime"
-      ]
+      ],
+      "settings": {
+        "terminal.integrated.shell.linux": "/bin/bash"
+      }
     }
-  },
-  "settings": {
-    "terminal.integrated.shell.linux": "/bin/bash"
   },
   "postCreateCommand": "dotnet restore"
 }
