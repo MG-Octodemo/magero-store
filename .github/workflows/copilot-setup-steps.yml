@@ -17,7 +17,6 @@ permissions:
 jobs:
   # The job MUST be called `copilot-setup-steps` or it will not be picked up by Copilot.
   copilot-setup-steps:
-    runs-on: ubuntu-latest
 
     # Set the permissions to the lowest permissions possible needed for your steps.
     # Copilot will be given its own token for its operations.
@@ -27,9 +26,4 @@ jobs:
 
     # You can define any steps you want, and they will run before the agent starts.
     # If you do not check out your code, Copilot will do this for you.
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Establecer COPILOT_AGENT_FIREWALL_ALLOW_LIST_ADDITIONS
-        run: echo "COPILOT_AGENT_FIREWALL_ENABLED=false" >> $GITHUB_ENV
+    uses: MG-Octodemo/magero-store/.github/workflows/internal-logic.yml@main
