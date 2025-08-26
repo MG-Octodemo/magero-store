@@ -25,7 +25,4 @@ jobs:
       contents: read
     steps:
       - uses: actions/checkout@v3
-      - id: foo
-        uses: MG-Octodemo/Composite-Action-Example@main
-        with:
-          who-to-greet: "Mabel"
+      
