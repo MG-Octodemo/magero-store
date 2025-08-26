@@ -16,16 +16,27 @@ namespace magero_store.Controllers
             _configuration = configuration;
         }
 
-        public IActionResult Index(string searchTerm)
+        public IActionResult Index(string searchTerm, string category)
         {
-            if(string.IsNullOrEmpty(searchTerm))
+            var products = SampleData.Products;
+
+            // Aplicamos filtro por categoría si está especificada
+            if (!string.IsNullOrEmpty(category))
             {
-                return View(SampleData.Products);
+                products = products.Where(p => p.Category == category).ToList();
             }
 
-            // Simulate a search by filtering the in-memory list
-            var products = SampleData.Products;
-            products = products.Where(p => p.Description.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
+            // Aplicamos filtro por término de búsqueda si está especificado
+            if (!string.IsNullOrEmpty(searchTerm))
+            {
+                products = products.Where(p => p.Description.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
+            }
+
+            // Obtenemos lista de categorías disponibles para el dropdown
+            ViewBag.Categories = SampleData.Products.Select(p => p.Category).Distinct().OrderBy(c => c).ToList();
+            ViewBag.SelectedCategory = category;
+            ViewBag.SearchTerm = searchTerm;
+
             return View(products);
         }
 
