@@ -17,6 +17,7 @@ permissions:
 jobs:
   # The job MUST be called `copilot-setup-steps` or it will not be picked up by Copilot.
   copilot-setup-steps:
+    if: ${{ github.actor == 'copilot' }}
     runs-on: 
       group: MacGroup
     # Set the permissions to the lowest permissions possible needed for your steps.
