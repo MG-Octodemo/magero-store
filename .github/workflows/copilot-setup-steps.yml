@@ -18,8 +18,7 @@ jobs:
   # The job MUST be called `copilot-setup-steps` or it will not be picked up by Copilot.
   copilot-setup-steps:
     if: ${{ github.actor == 'copilot' }}
-    runs-on: 
-      group: MacGroup
+    runs-on: ubuntu-latest
     # Set the permissions to the lowest permissions possible needed for your steps.
     # Copilot will be given its own token for its operations.
     permissions:
