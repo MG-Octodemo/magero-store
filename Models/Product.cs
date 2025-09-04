@@ -34,5 +34,10 @@ namespace magero_store.Models
         /// </summary>
         public string ImageUrl { get; set; }
 
+        /// <summary>
+        /// Categoría del producto para facilitar la navegación y búsqueda.
+        /// </summary>
+        public string Category { get; set; }
+
     }
 }
