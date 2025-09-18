@@ -4,16 +4,19 @@ using magero_store.Data;
 using Microsoft.Data.SqlClient;  // Changed from System.Data.SqlClient
 using Dapper;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace magero_store.Controllers
 {
     public class ProductsController : Controller
     {
         private readonly IConfiguration _configuration;
+        private readonly ILogger<ProductsController> _logger;
 
-        public ProductsController(IConfiguration configuration)
+        public ProductsController(IConfiguration configuration, ILogger<ProductsController> logger)
         {
             _configuration = configuration;
+            _logger = logger;
         }
 
         public IActionResult Index(string searchTerm)
@@ -39,17 +42,94 @@ namespace magero_store.Controllers
             return View(product);
         }
 
-        // WARNING: This is deliberately vulnerable to SQL injection!
+        /// <summary>
+        /// Realiza una búsqueda segura de productos en la base de datos.
+        /// Implementa validaciones de entrada y manejo de errores para prevenir SQL injection.
+        /// </summary>
+        /// <param name="searchTerm">Término de búsqueda - validado y sanitizado</param>
+        /// <returns>Vista con los productos encontrados</returns>
         public IActionResult Search(string searchTerm)
         {
-            using (var connection = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
+            try
             {
-                connection.Open();
-                // Vulnerable code: Direct string concatenation in SQL query
-                var sql = "SELECT * FROM Products WHERE Name LIKE @SearchTerm OR Description LIKE @SearchTerm";
-                var products = connection.Query<Product>(sql, new { SearchTerm = "%" + searchTerm + "%" }).ToList();
-                return View("Index", products);
+                // Validación de entrada: verificar parámetros nulos o vacíos
+                if (string.IsNullOrEmpty(searchTerm))
+                {
+                    _logger.LogInformation("Búsqueda realizada con término vacío, retornando vista vacía");
+                    return View("Index", new List<Product>());
+                }
+
+                // Validación de longitud para prevenir ataques de DoS
+                if (searchTerm.Length > 100)
+                {
+                    _logger.LogWarning("Intento de búsqueda con término demasiado largo: {Length} caracteres", searchTerm.Length);
+                    ModelState.AddModelError("searchTerm", "El término de búsqueda es demasiado largo (máximo 100 caracteres)");
+                    return View("Index", new List<Product>());
+                }
+
+                // Sanitización del término de búsqueda: remover caracteres especiales potencialmente peligrosos
+                var sanitizedSearchTerm = SanitizeSearchTerm(searchTerm);
+                
+                if (string.IsNullOrEmpty(sanitizedSearchTerm))
+                {
+                    _logger.LogWarning("Término de búsqueda completamente sanitizado resultó vacío");
+                    return View("Index", new List<Product>());
+                }
+
+                _logger.LogInformation("Realizando búsqueda segura con término sanitizado");
+
+                // Conexión segura a la base de datos con manejo de errores
+                using (var connection = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
+                {
+                    connection.Open();
+                    
+                    // Consulta SQL segura usando parámetros con Dapper (previene SQL injection)
+                    var sql = "SELECT * FROM Products WHERE Name LIKE @SearchTerm OR Description LIKE @SearchTerm";
+                    var searchParameter = "%" + sanitizedSearchTerm + "%";
+                    
+                    var products = connection.Query<Product>(sql, new { SearchTerm = searchParameter }).ToList();
+                    
+                    _logger.LogInformation("Búsqueda completada exitosamente. Productos encontrados: {Count}", products.Count);
+                    
+                    return View("Index", products);
+                }
             }
+            catch (SqlException sqlEx)
+            {
+                // Manejo específico de errores de base de datos
+                _logger.LogError(sqlEx, "Error de base de datos durante búsqueda: {ErrorMessage}", sqlEx.Message);
+                ModelState.AddModelError("", "Error interno del servidor. Por favor, intente nuevamente.");
+                return View("Index", new List<Product>());
+            }
+            catch (Exception ex)
+            {
+                // Manejo general de errores
+                _logger.LogError(ex, "Error inesperado durante búsqueda: {ErrorMessage}", ex.Message);
+                ModelState.AddModelError("", "Error interno del servidor. Por favor, intente nuevamente.");
+                return View("Index", new List<Product>());
+            }
+        }
+
+        /// <summary>
+        /// Sanitiza el término de búsqueda removiendo caracteres potencialmente peligrosos.
+        /// Permite solo letras, números, espacios y algunos caracteres especiales básicos.
+        /// </summary>
+        /// <param name="input">Término de búsqueda original</param>
+        /// <returns>Término sanitizado</returns>
+        private string SanitizeSearchTerm(string input)
+        {
+            if (string.IsNullOrEmpty(input))
+                return string.Empty;
+
+            // Remover caracteres potencialmente peligrosos manteniendo funcionalidad de búsqueda
+            // Permite: letras, números, espacios, guiones, puntos y apostrofes
+            var regex = new Regex(@"[^a-zA-Z0-9\s\-\.'áéíóúñÁÉÍÓÚÑ]", RegexOptions.Compiled);
+            var sanitized = regex.Replace(input, "").Trim();
+            
+            // Normalizar espacios múltiples
+            sanitized = Regex.Replace(sanitized, @"\s+", " ", RegexOptions.Compiled);
+            
+            return sanitized;
         }
     }
 }
