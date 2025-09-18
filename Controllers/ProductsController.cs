@@ -43,8 +43,8 @@ namespace magero_store.Controllers
         }
 
         /// <summary>
-        /// Realiza una búsqueda segura de productos en la base de datos.
-        /// Implementa validaciones de entrada y manejo de errores para prevenir SQL injection.
+        /// Realiza una búsqueda segura de productos en memoria.
+        /// Implementa validaciones de entrada y manejo de errores para prevenir ataques de entrada.
         /// </summary>
         /// <param name="searchTerm">Término de búsqueda - validado y sanitizado</param>
         /// <returns>Vista con los productos encontrados</returns>
@@ -78,28 +78,15 @@ namespace magero_store.Controllers
 
                 _logger.LogInformation("Realizando búsqueda segura con término sanitizado");
 
-                // Conexión segura a la base de datos con manejo de errores
-                using (var connection = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
-                {
-                    connection.Open();
-                    
-                    // Consulta SQL segura usando parámetros con Dapper (previene SQL injection)
-                    var sql = "SELECT * FROM Products WHERE Name LIKE @SearchTerm OR Description LIKE @SearchTerm";
-                    var searchParameter = "%" + sanitizedSearchTerm + "%";
-                    
-                    var products = connection.Query<Product>(sql, new { SearchTerm = searchParameter }).ToList();
-                    
-                    _logger.LogInformation("Búsqueda completada exitosamente. Productos encontrados: {Count}", products.Count);
-                    
-                    return View("Index", products);
-                }
-            }
-            catch (SqlException sqlEx)
-            {
-                // Manejo específico de errores de base de datos
-                _logger.LogError(sqlEx, "Error de base de datos durante búsqueda: {ErrorMessage}", sqlEx.Message);
-                ModelState.AddModelError("", "Error interno del servidor. Por favor, intente nuevamente.");
-                return View("Index", new List<Product>());
+                // Búsqueda segura en los datos en memoria
+                var products = SampleData.Products
+                    .Where(p => p.Name.Contains(sanitizedSearchTerm, StringComparison.OrdinalIgnoreCase) || 
+                               p.Description.Contains(sanitizedSearchTerm, StringComparison.OrdinalIgnoreCase))
+                    .ToList();
+                
+                _logger.LogInformation("Búsqueda completada exitosamente. Productos encontrados: {Count}", products.Count);
+                
+                return View("Index", products);
             }
             catch (Exception ex)
             {
