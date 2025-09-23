@@ -30,10 +30,20 @@ namespace magero_store.Controllers
         /// Agrega un producto al carrito.
         /// </summary>
         /// <param name="productId">ID del producto a agregar.</param>
+        /// <param name="quantity">Cantidad a agregar (valor por defecto: 1).</param>
         /// <returns>Redirige a la vista del carrito.</returns>
-        public IActionResult AddToCart(int productId)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult AddToCart(int productId, int quantity = 1)
         {
-            var product = _context.Products.Find(productId);
+            // Validar cantidad
+            if (quantity < 1 || quantity > 100)
+            {
+                TempData["ErrorMessage"] = "La cantidad debe estar entre 1 y 100";
+                return RedirectToAction("Details", "Products", new { id = productId });
+            }
+
+            var product = SampleData.Products.FirstOrDefault(p => p.Id == productId);
             if (product == null)
             {
                 return NotFound();
@@ -44,11 +54,17 @@ namespace magero_store.Controllers
 
             if (cartItem == null)
             {
-                cartItems.Add(new CartItem { ProductId = productId, Quantity = 1, Product = product });
+                cartItems.Add(new CartItem { ProductId = productId, Quantity = quantity, Product = product });
             }
             else
             {
-                cartItem.Quantity++;
+                cartItem.Quantity += quantity;
+                // Validar que no exceda el límite
+                if (cartItem.Quantity > 100)
+                {
+                    cartItem.Quantity = 100;
+                    TempData["WarningMessage"] = "Se ha alcanzado el límite máximo de 100 unidades para este producto";
+                }
             }
 
             SaveCartItems(cartItems);
@@ -60,6 +76,8 @@ namespace magero_store.Controllers
         /// </summary>
         /// <param name="productId">ID del producto a eliminar.</param>
         /// <returns>Redirige a la vista del carrito.</returns>
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult RemoveFromCart(int productId)
         {
             var cartItems = GetCartItems();

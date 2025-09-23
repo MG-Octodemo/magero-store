@@ -25,7 +25,7 @@ namespace magero_store.Controllers
 
             // Simulate a search by filtering the in-memory list
             var products = SampleData.Products;
-            products = products.Where(p => p.Description.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
+            products = products.Where(p => p.Description != null && p.Description.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
             return View(products);
         }
 
