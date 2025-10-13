@@ -1,57 +1,64 @@
 using Microsoft.AspNetCore.Mvc;
 using magero_store.Models;
+using magero_store.Services;
+using magero_store.ViewModels;
 using System.Collections.Generic;
 using System.Linq;
-using magero_store.Helpers;
-using magero_store.Data;
 
 namespace magero_store.Controllers
 {
+    /// <summary>
+    /// Controlador del carrito de compras (patrón MVC).
+    /// Gestiona las interacciones del usuario con el carrito delegando la lógica de negocio al servicio.
+    /// </summary>
     public class CartController : Controller
     {
-        private readonly Data.ApplicationDbContext _context;
+        private readonly ICartService _cartService;
 
-        public CartController(Data.ApplicationDbContext context)
+        /// <summary>
+        /// Constructor del controlador de carrito.
+        /// </summary>
+        /// <param name="cartService">Servicio de carrito (inyección de dependencias).</param>
+        public CartController(ICartService cartService)
         {
-            _context = context;
+            _cartService = cartService ?? throw new ArgumentNullException(nameof(cartService));
         }
 
         /// <summary>
         /// Muestra la página del carrito con los elementos actuales.
         /// </summary>
         /// <returns>Vista con los elementos del carrito.</returns>
+        [HttpGet]
         public IActionResult Index()
         {
-            var cartItems = GetCartItems();
-            return View(cartItems);
+            var cartViewModel = _cartService.GetCart();
+            return View(cartViewModel);
         }
 
         /// <summary>
         /// Agrega un producto al carrito.
         /// </summary>
         /// <param name="productId">ID del producto a agregar.</param>
+        /// <param name="quantity">Cantidad a agregar (opcional, por defecto 1).</param>
         /// <returns>Redirige a la vista del carrito.</returns>
-        public IActionResult AddToCart(int productId)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddToCart(int productId, int quantity = 1)
         {
-            var product = _context.Products.Find(productId);
-            if (product == null)
+            // Validación del parámetro
+            if (productId <= 0)
             {
-                return NotFound();
+                return BadRequest("ID de producto inválido");
             }
 
-            var cartItems = GetCartItems();
-            var cartItem = cartItems.FirstOrDefault(ci => ci.ProductId == productId);
-
-            if (cartItem == null)
+            // Delegar la lógica de negocio al servicio
+            var result = await _cartService.AddToCartAsync(productId, quantity);
+            
+            if (!result)
             {
-                cartItems.Add(new CartItem { ProductId = productId, Quantity = 1, Product = product });
-            }
-            else
-            {
-                cartItem.Quantity++;
+                return NotFound("Producto no encontrado");
             }
 
-            SaveCartItems(cartItems);
             return RedirectToAction("Index");
         }
 
@@ -60,51 +67,69 @@ namespace magero_store.Controllers
         /// </summary>
         /// <param name="productId">ID del producto a eliminar.</param>
         /// <returns>Redirige a la vista del carrito.</returns>
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult RemoveFromCart(int productId)
         {
-            var cartItems = GetCartItems();
-            var cartItem = cartItems.FirstOrDefault(ci => ci.ProductId == productId);
-
-            if (cartItem != null)
+            // Validación del parámetro
+            if (productId <= 0)
             {
-                cartItems.Remove(cartItem);
+                return BadRequest("ID de producto inválido");
             }
 
-            SaveCartItems(cartItems);
+            // Delegar la lógica de negocio al servicio
+            _cartService.RemoveFromCart(productId);
+            
             return RedirectToAction("Index");
         }
 
         /// <summary>
         /// Muestra la página de checkout con los elementos actuales del carrito.
         /// </summary>
-        /// <returns>Vista de checkout.</returns>
+        /// <returns>Vista de checkout con el ViewModel.</returns>
+        [HttpGet]
         public IActionResult Checkout()
         {
-            var cartItems = GetCartItems();
-            if (!cartItems.Any())
+            var cartViewModel = _cartService.GetCart();
+            
+            if (!cartViewModel.Items.Any())
             {
                 return RedirectToAction("Index", "Home");
             }
 
-            return View(cartItems);
+            // Crear CheckoutViewModel con datos del carrito
+            var checkoutViewModel = new CheckoutViewModel
+            {
+                CartItems = cartViewModel.Items
+            };
+
+            return View(checkoutViewModel);
         }
 
         /// <summary>
-        /// Obtiene los elementos actuales del carrito desde la sesión.
+        /// Procesa el checkout del pedido.
         /// </summary>
-        /// <returns>Lista de elementos del carrito.</returns>
-        private List<CartItem> GetCartItems()
+        /// <param name="model">ViewModel con información del checkout.</param>
+        /// <returns>Resultado del procesamiento.</returns>
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Checkout(CheckoutViewModel model)
         {
-            return HttpContext.Session.Get<List<CartItem>>("Cart") ?? new List<CartItem>();
-        }
+            if (!ModelState.IsValid)
+            {
+                // Recargar items del carrito si hay errores de validación
+                var cartViewModel = _cartService.GetCart();
+                model.CartItems = cartViewModel.Items;
+                return View(model);
+            }
 
-        /// <summary>
-        /// Guarda los elementos del carrito en la sesión.
-        /// </summary>
-        /// <param name="cartItems">Lista de elementos del carrito a guardar.</param>
-        private void SaveCartItems(List<CartItem> cartItems)
-        {
-            HttpContext.Session.Set("Cart", cartItems);
+            // TODO: Implementar lógica de procesamiento de pedido
+            // Por ahora solo limpiar el carrito
+            _cartService.ClearCart();
+
+            // Redirigir a una página de confirmación
+            TempData["SuccessMessage"] = "¡Pedido realizado exitosamente!";
+            return RedirectToAction("Index", "Home");
         }
     }
 }

@@ -3,6 +3,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using magero_store.Data;
+using magero_store.Services;
 
 public class Program
 {
@@ -10,7 +11,7 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        // Add services to the container
+        // Add services to the container (MVC Architecture)
         builder.Services.AddControllersWithViews();
 
         // Add distributed memory cache (required for session)
@@ -24,9 +25,16 @@ public class Program
             options.Cookie.IsEssential = true;
         });
 
-        // Add DbContext configuration
+        // Add DbContext configuration (Data Layer - MVC)
         builder.Services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+        // Register application services (Business Logic Layer - MVC)
+        builder.Services.AddScoped<IProductService, ProductService>();
+        builder.Services.AddScoped<ICartService, CartService>();
+        
+        // Add HttpContextAccessor for session access in services
+        builder.Services.AddHttpContextAccessor();
 
         var app = builder.Build();
 

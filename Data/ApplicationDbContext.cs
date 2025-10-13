@@ -3,15 +3,35 @@ using magero_store.Models;
 
 namespace magero_store.Data
 {
+    /// <summary>
+    /// Contexto de base de datos de la aplicación.
+    /// Gestiona las entidades de productos y carritos de compra.
+    /// </summary>
     public class ApplicationDbContext : DbContext
     {
+        /// <summary>
+        /// Constructor del contexto de base de datos.
+        /// </summary>
+        /// <param name="options">Opciones de configuración del DbContext.</param>
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
         }
 
-        public DbSet<Product> Products { get; set; }
+        /// <summary>
+        /// DbSet de productos disponibles en la tienda.
+        /// </summary>
+        public DbSet<Product> Products { get; set; } = null!;
 
+        /// <summary>
+        /// DbSet de elementos del carrito de compras.
+        /// </summary>
+        public DbSet<CartItem> CartItems { get; set; } = null!;
+
+        /// <summary>
+        /// Configura el modelo de datos y establece datos iniciales.
+        /// </summary>
+        /// <param name="modelBuilder">Constructor del modelo de entidades.</param>
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

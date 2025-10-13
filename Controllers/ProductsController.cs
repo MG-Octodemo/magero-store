@@ -1,55 +1,85 @@
 using Microsoft.AspNetCore.Mvc;
 using magero_store.Models;
-using magero_store.Data;
-using Microsoft.Data.SqlClient;  // Changed from System.Data.SqlClient
-using Dapper;
+using magero_store.Services;
 using System.Linq;
 
 namespace magero_store.Controllers
 {
+    /// <summary>
+    /// Controlador de productos (patrón MVC).
+    /// Gestiona las vistas y acciones relacionadas con productos delegando la lógica de negocio al servicio.
+    /// </summary>
     public class ProductsController : Controller
     {
-        private readonly IConfiguration _configuration;
+        private readonly IProductService _productService;
 
-        public ProductsController(IConfiguration configuration)
+        /// <summary>
+        /// Constructor del controlador de productos.
+        /// </summary>
+        /// <param name="productService">Servicio de productos (inyección de dependencias).</param>
+        public ProductsController(IProductService productService)
         {
-            _configuration = configuration;
+            _productService = productService ?? throw new ArgumentNullException(nameof(productService));
         }
 
-        public IActionResult Index(string searchTerm)
+        /// <summary>
+        /// Muestra la lista de todos los productos.
+        /// </summary>
+        /// <param name="searchTerm">Término de búsqueda opcional.</param>
+        /// <returns>Vista con lista de productos.</returns>
+        [HttpGet]
+        public async Task<IActionResult> Index(string? searchTerm)
         {
-            if(string.IsNullOrEmpty(searchTerm))
+            IEnumerable<Product> products;
+
+            if (string.IsNullOrWhiteSpace(searchTerm))
             {
-                return View(SampleData.Products);
+                // Obtener todos los productos
+                products = await _productService.GetAllProductsAsync();
+            }
+            else
+            {
+                // Buscar productos por término
+                products = await _productService.SearchProductsAsync(searchTerm);
+                ViewBag.SearchTerm = searchTerm;
             }
 
-            // Simulate a search by filtering the in-memory list
-            var products = SampleData.Products;
-            products = products.Where(p => p.Description.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
             return View(products);
         }
 
-        public IActionResult Details(int id)
+        /// <summary>
+        /// Muestra los detalles de un producto específico.
+        /// </summary>
+        /// <param name="id">ID del producto.</param>
+        /// <returns>Vista de detalles del producto.</returns>
+        [HttpGet]
+        public async Task<IActionResult> Details(int id)
         {
-            var product = SampleData.Products.FirstOrDefault(p => p.Id == id);
+            if (id <= 0)
+            {
+                return BadRequest("ID de producto inválido");
+            }
+
+            var product = await _productService.GetProductByIdAsync(id);
+            
             if (product == null)
             {
                 return NotFound();
             }
+
             return View(product);
         }
 
-        // WARNING: This is deliberately vulnerable to SQL injection!
-        public IActionResult Search(string searchTerm)
+        /// <summary>
+        /// Busca productos por término de búsqueda.
+        /// </summary>
+        /// <param name="searchTerm">Término de búsqueda.</param>
+        /// <returns>Vista con resultados de búsqueda.</returns>
+        [HttpGet]
+        public IActionResult Search(string? searchTerm)
         {
-            using (var connection = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
-            {
-                connection.Open();
-                // Vulnerable code: Direct string concatenation in SQL query
-                var sql = "SELECT * FROM Products WHERE Name LIKE @SearchTerm OR Description LIKE @SearchTerm";
-                var products = connection.Query<Product>(sql, new { SearchTerm = "%" + searchTerm + "%" }).ToList();
-                return View("Index", products);
-            }
+            // Redirigir a Index con el término de búsqueda
+            return RedirectToAction("Index", new { searchTerm });
         }
     }
 }
