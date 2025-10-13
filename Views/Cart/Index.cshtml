@@ -1,5 +1,5 @@
-@using magero_store.Models
-@model IEnumerable<magero_store.Models.CartItem>
+@using magero_store.ViewModels
+@model CartViewModel
 
 @{
     ViewData["Title"] = "Shopping Cart";
@@ -13,39 +13,39 @@
 </div>
 
 <div class="cart-container">
-    @if (Model != null && Model.Any())
+    @if (Model != null && Model.Items.Any())
     {
         <div class="cart-items">
-            @foreach (var item in Model)
+            @foreach (var item in Model.Items)
             {
-                @if (item.Product != null)
-                {
-                    <div class="cart-item card mb-3">
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-2">
-                                    <img src="@item.Product.ImageUrl" class="img-fluid" alt="@item.Product.Name" />
-                                </div>
-                                <div class="col-md-10">
-                                    <h5 class="card-title">@item.Product.Name</h5>
-                                    <p class="card-text">Price: @item.Product.Price.ToString("C")</p>
-                                    <p class="card-text">Quantity: @item.Quantity</p>
-                                    <form asp-action="RemoveFromCart" asp-controller="Cart" method="post" class="d-inline">
-                                        @Html.AntiForgeryToken()
-                                        <input type="hidden" name="productId" value="@item.ProductId" />
-                                        <button type="submit" class="btn btn-danger">Remove</button>
-                                    </form>
-                                </div>
+                <div class="cart-item card mb-3">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-2">
+                                <img src="@item.ImageUrl" class="img-fluid" alt="@item.ProductName" />
+                            </div>
+                            <div class="col-md-10">
+                                <h5 class="card-title">@item.ProductName</h5>
+                                <p class="card-text">@item.ProductDescription</p>
+                                <p class="card-text">Price: @item.UnitPrice.ToString("C")</p>
+                                <p class="card-text">Quantity: @item.Quantity</p>
+                                <p class="card-text"><strong>Subtotal: @item.Subtotal.ToString("C")</strong></p>
+                                <form asp-action="RemoveFromCart" asp-controller="Cart" method="post" class="d-inline">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="productId" value="@item.ProductId" />
+                                    <button type="submit" class="btn btn-danger">Remove</button>
+                                </form>
                             </div>
                         </div>
                     </div>
-                }
+                </div>
             }
             <div class="cart-summary card">
                 <div class="card-body">
                     <h5 class="card-title">Cart Summary</h5>
-                    <p class="card-text">Total: @Model.Where(i => i.Product != null).Sum(i => i.Quantity * i.Product!.Price).ToString("C")</p>
-                    <a href="#" class="btn btn-success">Proceed to Checkout</a>
+                    <p class="card-text">Items: @Model.ItemCount</p>
+                    <p class="card-text"><strong>Total: @Model.Total.ToString("C")</strong></p>
+                    <a asp-action="Checkout" asp-controller="Cart" class="btn btn-success">Proceed to Checkout</a>
                 </div>
             </div>
         </div>
