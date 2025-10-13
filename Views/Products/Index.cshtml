@@ -31,6 +31,7 @@
                     <div class="mt-auto">
                         <p class="price h4 mb-3">$@product.Price.ToString("0.00")</p>
                         <form asp-action="AddToCart" asp-controller="Cart" method="post">
+                            @Html.AntiForgeryToken()
                             <input type="hidden" name="productId" value="@product.Id" />
                             <div class="input-group mb-3">
                                 <select name="quantity" class="form-select">
