@@ -57,7 +57,9 @@ namespace magero_store.Controllers
             }
             else
             {
-                cartItem.Quantity += quantity;
+                // Asegurar que la cantidad total no exceda el máximo permitido
+                int newQuantity = cartItem.Quantity + quantity;
+                cartItem.Quantity = Math.Min(newQuantity, 100);
             }
 
             SaveCartItems(cartItems);
