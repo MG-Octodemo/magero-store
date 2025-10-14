@@ -31,6 +31,8 @@ namespace magero_store.Controllers
         /// </summary>
         /// <param name="productId">ID del producto a agregar.</param>
         /// <returns>Redirige a la vista del carrito.</returns>
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult AddToCart(int productId)
         {
             var product = _context.Products.Find(productId);
@@ -60,6 +62,8 @@ namespace magero_store.Controllers
         /// </summary>
         /// <param name="productId">ID del producto a eliminar.</param>
         /// <returns>Redirige a la vista del carrito.</returns>
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult RemoveFromCart(int productId)
         {
             var cartItems = GetCartItems();
