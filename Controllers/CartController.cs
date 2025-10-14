@@ -36,6 +36,12 @@ namespace magero_store.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult AddToCart(int productId, int quantity = 1)
         {
+            // Validar cantidad
+            if (quantity < 1 || quantity > 100)
+            {
+                quantity = 1;
+            }
+
             var product = _context.Products.Find(productId);
             if (product == null)
             {
