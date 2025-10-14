@@ -55,6 +55,9 @@ StyleCopReport.xml
 *.msm
 *.msi
 *.prg
-*.prg.bak*.db
+*.prg.bak
+
+# Database files
+*.db
 *.db-shm
 *.db-wal

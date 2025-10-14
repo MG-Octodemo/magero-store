@@ -45,7 +45,7 @@
                 <div class="card-body">
                     <h5 class="card-title">Cart Summary</h5>
                     <p class="card-text">Total: @Model.Where(i => i.Product != null).Sum(i => i.Quantity * i.Product!.Price).ToString("C")</p>
-                    <a href="#" class="btn btn-success">Proceed to Checkout</a>
+                    <a asp-controller="Cart" asp-action="Checkout" class="btn btn-success">Proceed to Checkout</a>
                 </div>
             </div>
         </div>

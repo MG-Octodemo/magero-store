@@ -30,10 +30,11 @@ namespace magero_store.Controllers
         /// Agrega un producto al carrito.
         /// </summary>
         /// <param name="productId">ID del producto a agregar.</param>
+        /// <param name="quantity">Cantidad del producto a agregar (por defecto 1).</param>
         /// <returns>Redirige a la vista del carrito.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult AddToCart(int productId)
+        public IActionResult AddToCart(int productId, int quantity = 1)
         {
             var product = _context.Products.Find(productId);
             if (product == null)
@@ -46,11 +47,11 @@ namespace magero_store.Controllers
 
             if (cartItem == null)
             {
-                cartItems.Add(new CartItem { ProductId = productId, Quantity = 1, Product = product });
+                cartItems.Add(new CartItem { ProductId = productId, Quantity = quantity, Product = product });
             }
             else
             {
-                cartItem.Quantity++;
+                cartItem.Quantity += quantity;
             }
 
             SaveCartItems(cartItems);
