@@ -3,9 +3,9 @@ namespace magero_store.ViewModels
     public class ProductViewModel
     {
         public int Id { get; set; }
-        public required string Name { get; set; }
-        public required string Description { get; set; }
-        public decimal Price { get; set; }
-        public required string ImageUrl { get; set; }
+        public required string Nombre { get; set; }
+        public required string Descripcion { get; set; }
+        public decimal Precio { get; set; }
+        public required string UrlImagen { get; set; }
     }
 }

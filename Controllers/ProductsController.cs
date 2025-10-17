@@ -25,7 +25,7 @@ namespace magero_store.Controllers
 
             // Simulate a search by filtering the in-memory list
             var products = SampleData.Products;
-            products = products.Where(p => p.Description.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
+            products = products.Where(p => p.Descripcion.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
             return View(products);
         }
 
@@ -46,7 +46,7 @@ namespace magero_store.Controllers
             {
                 connection.Open();
                 // Vulnerable code: Direct string concatenation in SQL query
-                var sql = "SELECT * FROM Products WHERE Name LIKE @SearchTerm OR Description LIKE @SearchTerm";
+                var sql = "SELECT * FROM Products WHERE Nombre LIKE @SearchTerm OR Descripcion LIKE @SearchTerm";
                 var products = connection.Query<Product>(sql, new { SearchTerm = "%" + searchTerm + "%" }).ToList();
                 return View("Index", products);
             }
