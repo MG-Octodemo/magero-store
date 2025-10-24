@@ -26,7 +26,7 @@ namespace magero_store.Controllers
 
             // Simulate a search by filtering the in-memory list
             var products = SampleData.Products;
-            products = products.Where(p => p.Description.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
+            products = products.Where(p => p.Descripcion.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
             return View(products);
         }
 
@@ -75,11 +75,11 @@ namespace magero_store.Controllers
                     connection.Open();
                     
                     // Consulta SQL segura con parámetros para prevenir inyección SQL
-                    var sql = @"SELECT Id, Name, Description, Price, ImageUrl 
+                    var sql = @"SELECT Id, Nombre, Descripcion, Precio, ImagenUrl 
                                FROM Products 
-                               WHERE Name LIKE @SearchTerm 
-                                  OR Description LIKE @SearchTerm
-                               ORDER BY Name";
+                               WHERE Nombre LIKE @SearchTerm 
+                                  OR Descripcion LIKE @SearchTerm
+                               ORDER BY Nombre";
                     
                     // Sanitización del término de búsqueda
                     var sanitizedSearchTerm = $"%{searchTerm.Trim()}%";
