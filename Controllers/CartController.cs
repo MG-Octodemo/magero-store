@@ -33,6 +33,12 @@ namespace magero_store.Controllers
         /// <returns>Redirige a la vista del carrito.</returns>
         public IActionResult AddToCart(int productId)
         {
+            // Validar que el ID sea positivo
+            if (productId <= 0)
+            {
+                return BadRequest("ID de producto inválido.");
+            }
+
             var product = _context.Products.Find(productId);
             if (product == null)
             {
@@ -62,6 +68,12 @@ namespace magero_store.Controllers
         /// <returns>Redirige a la vista del carrito.</returns>
         public IActionResult RemoveFromCart(int productId)
         {
+            // Validar que el ID sea positivo
+            if (productId <= 0)
+            {
+                return BadRequest("ID de producto inválido.");
+            }
+
             var cartItems = GetCartItems();
             var cartItem = cartItems.FirstOrDefault(ci => ci.ProductId == productId);
 

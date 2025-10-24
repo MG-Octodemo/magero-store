@@ -79,10 +79,10 @@ namespace magero_store.Data
             new Product
             {
                 Id = 9,
-                Name = "Laptop",
-                Description = "High-performance laptop for work and play",
-                Price = 999.99M,
-                ImageUrl = "https://images.unsplash.com/photo-1517336714731-489689fd1ca8"
+                Name = "Wireless Mouse",
+                Description = "Ergonomic wireless mouse for comfortable use",
+                Price = 29.99M,
+                ImageUrl = "https://images.unsplash.com/photo-1527864550417-7fd91fc51a46"
             },
             new Product
             {
