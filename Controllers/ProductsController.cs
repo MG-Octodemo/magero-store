@@ -1,19 +1,24 @@
 using Microsoft.AspNetCore.Mvc;
 using magero_store.Models;
 using magero_store.Data;
-using Microsoft.Data.SqlClient;  // Changed from System.Data.SqlClient
-using Dapper;
 using System.Linq;
 
 namespace magero_store.Controllers
 {
+    /// <summary>
+    /// Controlador para gestionar las operaciones relacionadas con productos.
+    /// </summary>
     public class ProductsController : Controller
     {
-        private readonly IConfiguration _configuration;
+        private readonly ApplicationDbContext _context;
 
-        public ProductsController(IConfiguration configuration)
+        /// <summary>
+        /// Constructor que inyecta el contexto de base de datos.
+        /// </summary>
+        /// <param name="context">Contexto de la base de datos.</param>
+        public ProductsController(ApplicationDbContext context)
         {
-            _configuration = configuration;
+            _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
         /// <summary>
@@ -61,8 +66,6 @@ namespace magero_store.Controllers
             return View(product);
         }
 
-        // NOTA: Este método utiliza consultas parametrizadas para prevenir inyección SQL.
-        // El uso de @SearchTerm es seguro y previene ataques de SQL injection.
         /// <summary>
         /// Busca productos en la base de datos usando un término de búsqueda.
         /// </summary>
@@ -81,14 +84,12 @@ namespace magero_store.Controllers
                 return BadRequest("El término de búsqueda es demasiado largo.");
             }
 
-            using (var connection = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
-            {
-                connection.Open();
-                // Código seguro: Uso de parámetros para prevenir SQL injection
-                var sql = "SELECT * FROM Products WHERE Name LIKE @SearchTerm OR Description LIKE @SearchTerm";
-                var products = connection.Query<Product>(sql, new { SearchTerm = "%" + searchTerm + "%" }).ToList();
-                return View("Index", products);
-            }
+            // Usar LINQ con EF Core para búsqueda segura (previene SQL injection)
+            var products = _context.Products
+                .Where(p => p.Name.Contains(searchTerm) || p.Description.Contains(searchTerm))
+                .ToList();
+            
+            return View("Index", products);
         }
     }
 }

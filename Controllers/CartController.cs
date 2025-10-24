@@ -7,13 +7,20 @@ using magero_store.Data;
 
 namespace magero_store.Controllers
 {
+    /// <summary>
+    /// Controlador para gestionar las operaciones del carrito de compras.
+    /// </summary>
     public class CartController : Controller
     {
-        private readonly Data.ApplicationDbContext _context;
+        private readonly ApplicationDbContext _context;
 
-        public CartController(Data.ApplicationDbContext context)
+        /// <summary>
+        /// Constructor que inyecta el contexto de base de datos.
+        /// </summary>
+        /// <param name="context">Contexto de la base de datos.</param>
+        public CartController(ApplicationDbContext context)
         {
-            _context = context;
+            _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
         /// <summary>
