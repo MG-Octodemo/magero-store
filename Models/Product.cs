@@ -16,23 +16,23 @@ namespace magero_store.Models
         /// Nombre del producto.
         /// </summary>
         [Required]
-        public string Name { get; set; }
+        public string Nombre { get; set; }
 
         /// <summary>
         /// Descripción del producto.
         /// </summary>
-        public string Description { get; set; }
+        public string Descripcion { get; set; }
 
         /// <summary>
         /// Precio del producto.
         /// </summary>
         [Required]
-        public decimal Price { get; set; }
+        public decimal Precio { get; set; }
 
         /// <summary>
         /// URL de la imagen del producto.
         /// </summary>
-        public string ImageUrl { get; set; }
+        public string ImagenUrl { get; set; }
 
     }
 }
