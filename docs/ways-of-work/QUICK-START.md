@@ -62,7 +62,7 @@ Key metrics:
 
 #### Test Coverage Targets
 
-- **Line Coverage**: 80% minimum
+- **Code Coverage**: 80% minimum overall
 - **Branch Coverage**: 90% for critical paths
 - **Acceptance Criteria**: 100% validation
 
