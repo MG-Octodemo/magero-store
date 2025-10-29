@@ -23,9 +23,29 @@ namespace magero_store.Controllers
         /// Displays the list of products, optionally filtered by category.
         /// </summary>
         /// <param name="category">The category to filter by.</param>
+        /// <param name="searchTerm">The search term to filter products.</param>
         /// <returns>The products view.</returns>
-        public IActionResult Index(string category, string searchTerm)
+        public IActionResult Index(string? category, string? searchTerm)
         {
+            // Validación de parámetros
+            if (category != null)
+            {
+                category = category.Trim();
+                if (string.IsNullOrWhiteSpace(category))
+                {
+                    category = null;
+                }
+            }
+
+            if (searchTerm != null)
+            {
+                searchTerm = searchTerm.Trim();
+                if (string.IsNullOrWhiteSpace(searchTerm))
+                {
+                    searchTerm = null;
+                }
+            }
+
             var products = SampleData.Products;
             var categories = products.Select(p => p.Category).Distinct().ToList();
             if (!string.IsNullOrEmpty(category))
