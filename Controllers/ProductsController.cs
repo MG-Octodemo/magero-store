@@ -75,7 +75,7 @@ namespace magero_store.Controllers
                     connection.Open();
                     
                     // Consulta SQL segura con parámetros para prevenir inyección SQL
-                    var sql = @"SELECT Id, Nombre, Descripcion, Precio, ImagenUrl 
+                    var sql = @"SELECT Id, Nombre, Descripcion, Precio, UrlImagen 
                                FROM Products 
                                WHERE Nombre LIKE @SearchTerm 
                                   OR Descripcion LIKE @SearchTerm

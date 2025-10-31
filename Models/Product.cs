@@ -32,7 +32,7 @@ namespace magero_store.Models
         /// <summary>
         /// URL de la imagen del producto.
         /// </summary>
-        public string ImagenUrl { get; set; }
+        public string UrlImagen { get; set; }
 
     }
 }

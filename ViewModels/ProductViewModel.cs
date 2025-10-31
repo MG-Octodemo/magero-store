@@ -6,6 +6,6 @@ namespace magero_store.ViewModels
         public required string Nombre { get; set; }
         public required string Descripcion { get; set; }
         public decimal Precio { get; set; }
-        public required string ImagenUrl { get; set; }
+        public required string UrlImagen { get; set; }
     }
 }
