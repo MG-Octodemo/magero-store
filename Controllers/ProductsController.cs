@@ -39,16 +39,67 @@ namespace magero_store.Controllers
             return View(product);
         }
 
-        // WARNING: This is deliberately vulnerable to SQL injection!
+        /// <summary>
+        /// Busca productos de manera segura utilizando parámetros SQL para prevenir inyección SQL.
+        /// </summary>
+        /// <param name="searchTerm">Término de búsqueda para filtrar productos por nombre o descripción</param>
+        /// <returns>Vista de índice con la lista de productos que coinciden con la búsqueda</returns>
+        [HttpGet]
         public IActionResult Search(string searchTerm)
         {
-            using (var connection = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
+            // Validación de parámetros de entrada
+            if (string.IsNullOrWhiteSpace(searchTerm))
             {
-                connection.Open();
-                // Vulnerable code: Direct string concatenation in SQL query
-                var sql = "SELECT * FROM Products WHERE Name LIKE @SearchTerm OR Description LIKE @SearchTerm";
-                var products = connection.Query<Product>(sql, new { SearchTerm = "%" + searchTerm + "%" }).ToList();
-                return View("Index", products);
+                return View("Index", new List<Product>());
+            }
+
+            // Validación adicional del término de búsqueda
+            if (searchTerm.Length > 100)
+            {
+                ModelState.AddModelError("searchTerm", "El término de búsqueda es demasiado largo");
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                // Validación de conexión
+                var connectionString = _configuration.GetConnectionString("DefaultConnection");
+                if (string.IsNullOrEmpty(connectionString))
+                {
+                    throw new InvalidOperationException("Cadena de conexión no configurada");
+                }
+
+                using (var connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+                    
+                    // Consulta SQL segura con parámetros
+                    var sql = @"SELECT Id, Name, Description, Price, ImageUrl 
+                               FROM Products 
+                               WHERE Name LIKE @SearchTerm 
+                                  OR Description LIKE @SearchTerm
+                               ORDER BY Name";
+                    
+                    // Sanitización del término de búsqueda
+                    var sanitizedSearchTerm = $"%{searchTerm.Trim()}%";
+                    var products = connection.Query<Product>(sql, new { SearchTerm = sanitizedSearchTerm }).ToList();
+                    
+                    return View("Index", products);
+                }
+            }
+            catch (SqlException sqlEx)
+            {
+                // Manejo de errores de base de datos sin exponer detalles internos
+                // TODO: Implementar logging estructurado con ILogger
+                ModelState.AddModelError("", "Error al buscar productos. Intente nuevamente.");
+                return View("Index", new List<Product>());
+            }
+            catch (Exception ex)
+            {
+                // Manejo de errores generales
+                // TODO: Implementar logging estructurado con ILogger
+                ModelState.AddModelError("", "Error interno del servidor. Intente nuevamente más tarde.");
+                return StatusCode(500);
             }
         }
     }
