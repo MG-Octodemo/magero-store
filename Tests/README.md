@@ -33,7 +33,7 @@ Tests/
 4. ✅ `Product_PropiedadesSeAsignanCorrectamente` - Confirma que todas las propiedades se asignan correctamente
 5. ✅ `Product_PrecioConDecimales_SeAlmacenaCorrectamente` (Theory con 4 casos) - Valida diferentes valores decimales para `Precio`
 6. ✅ `Product_ConDescripcionNula_EsValido` - Verifica que `Descripcion` puede ser nula
-7. ✅ `Product_ConImagenUrlNula_EsValido` - Verifica que `ImagenUrl` puede ser nula
+7. ✅ `Product_ConUrlImagenNula_EsValido` - Verifica que `UrlImagen` puede ser nula
 
 ### Controlador ProductsController (ProductsControllerTests.cs)
 
@@ -102,7 +102,7 @@ Las pruebas validan las siguientes propiedades refactorizadas del modelo `Produc
 - ✅ `Nombre` - Nombre del producto (con validación `[Required]`)
 - ✅ `Descripcion` - Descripción del producto
 - ✅ `Precio` - Precio con soporte para decimales
-- ✅ `ImagenUrl` - URL de la imagen
+- ✅ `UrlImagen` - URL de la imagen
 
 ## 📝 Notas Importantes
 
@@ -110,7 +110,7 @@ Las pruebas validan las siguientes propiedades refactorizadas del modelo `Produc
 
 2. **Compatibilidad de Tipos**: Se verifica que el tipo `decimal` maneje correctamente diferentes valores para `Precio`.
 
-3. **Nullabilidad**: Las pruebas confirman que `Descripcion` e `ImagenUrl` pueden ser nulas, mientras que `Nombre` es requerido.
+3. **Nullabilidad**: Las pruebas confirman que `Descripcion` e `UrlImagen` pueden ser nulas, mientras que `Nombre` es requerido.
 
 4. **Búsquedas**: Se prueba la funcionalidad de búsqueda case-insensitive por descripción y la validación de parámetros de entrada.
 

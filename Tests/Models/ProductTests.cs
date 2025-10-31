@@ -22,7 +22,7 @@ namespace magero_store.Tests.Models
                 Nombre = "Laptop",
                 Descripcion = "Una laptop de alto rendimiento",
                 Precio = 999.99M,
-                ImagenUrl = "https://ejemplo.com/imagen.jpg"
+                UrlImagen = "https://ejemplo.com/imagen.jpg"
             };
 
             // Act
@@ -45,7 +45,7 @@ namespace magero_store.Tests.Models
                 Nombre = null,
                 Descripcion = "Una descripción",
                 Precio = 99.99M,
-                ImagenUrl = "https://ejemplo.com/imagen.jpg"
+                UrlImagen = "https://ejemplo.com/imagen.jpg"
             };
 
             // Act
@@ -69,7 +69,7 @@ namespace magero_store.Tests.Models
                 Nombre = "",
                 Descripcion = "Una descripción",
                 Precio = 99.99M,
-                ImagenUrl = "https://ejemplo.com/imagen.jpg"
+                UrlImagen = "https://ejemplo.com/imagen.jpg"
             };
 
             // Act
@@ -93,7 +93,7 @@ namespace magero_store.Tests.Models
                 Nombre = "Smartphone",
                 Descripcion = "Un smartphone moderno",
                 Precio = 599.99M,
-                ImagenUrl = "https://ejemplo.com/smartphone.jpg"
+                UrlImagen = "https://ejemplo.com/smartphone.jpg"
             };
 
             // Assert
@@ -101,7 +101,7 @@ namespace magero_store.Tests.Models
             Assert.Equal("Smartphone", product.Nombre);
             Assert.Equal("Un smartphone moderno", product.Descripcion);
             Assert.Equal(599.99M, product.Precio);
-            Assert.Equal("https://ejemplo.com/smartphone.jpg", product.ImagenUrl);
+            Assert.Equal("https://ejemplo.com/smartphone.jpg", product.UrlImagen);
         }
 
         /// <summary>
@@ -121,7 +121,7 @@ namespace magero_store.Tests.Models
                 Nombre = "Producto de prueba",
                 Descripcion = "Descripción",
                 Precio = precio,
-                ImagenUrl = "https://ejemplo.com/imagen.jpg"
+                UrlImagen = "https://ejemplo.com/imagen.jpg"
             };
 
             // Assert
@@ -141,7 +141,7 @@ namespace magero_store.Tests.Models
                 Nombre = "Producto",
                 Descripcion = null,
                 Precio = 99.99M,
-                ImagenUrl = "https://ejemplo.com/imagen.jpg"
+                UrlImagen = "https://ejemplo.com/imagen.jpg"
             };
 
             // Act
@@ -153,10 +153,10 @@ namespace magero_store.Tests.Models
         }
 
         /// <summary>
-        /// Verifica que un producto pueda tener ImagenUrl nula.
+        /// Verifica que un producto pueda tener UrlImagen nula.
         /// </summary>
         [Fact]
-        public void Product_ConImagenUrlNula_EsValido()
+        public void Product_ConUrlImagenNula_EsValido()
         {
             // Arrange
             var product = new Product
@@ -165,7 +165,7 @@ namespace magero_store.Tests.Models
                 Nombre = "Producto",
                 Descripcion = "Descripción",
                 Precio = 99.99M,
-                ImagenUrl = null
+                UrlImagen = null
             };
 
             // Act
@@ -173,7 +173,7 @@ namespace magero_store.Tests.Models
 
             // Assert
             Assert.Empty(validationResults);
-            Assert.Null(product.ImagenUrl);
+            Assert.Null(product.UrlImagen);
         }
 
         /// <summary>
