@@ -65,6 +65,24 @@ magero-store
    ```
    Navigate to `http://localhost:5000` in your web browser to view the application.
 
+## Testing
+The project includes unit tests using NUnit. The test project is located in the `magero-store.Tests` directory.
+
+### Running Tests
+To run all tests:
+```
+dotnet test
+```
+
+To run tests with detailed output:
+```
+dotnet test --logger "console;verbosity=detailed"
+```
+
+### Test Structure
+- **Models Tests**: Tests for data models (e.g., Product)
+- **Controllers Tests**: Tests for MVC controllers (e.g., HomeController)
+
 ## Contributing
 Contributions are welcome! Please feel free to submit a pull request or open an issue for any enhancements or bug fixes.
 
