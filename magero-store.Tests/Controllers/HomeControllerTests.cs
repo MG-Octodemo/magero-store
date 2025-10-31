@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using magero_store.Controllers;
+using magero_store.Models;
 using Microsoft.AspNetCore.Mvc;
 using NUnit.Framework;
 
@@ -41,7 +43,7 @@ namespace magero_store.Tests.Controllers
             // Assert
             Assert.IsNotNull(result);
             Assert.IsNotNull(result.Model);
-            Assert.IsInstanceOf<System.Collections.Generic.List<magero_store.Models.Product>>(result.Model);
+            Assert.IsInstanceOf<List<Product>>(result.Model);
         }
 
         /// <summary>
