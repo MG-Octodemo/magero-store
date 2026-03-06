@@ -65,6 +65,27 @@ magero-store
    ```
    Navigate to `http://localhost:5000` in your web browser to view the application.
 
+## Figma Design Reference
+
+This project includes a Figma MCP (Model Context Protocol) server configuration in `.vscode/mcp.json` that enables AI coding agents to access the Figma design data for this application.
+
+- **Figma Design**: [My Demo Website](https://www.figma.com/design/XuvSv0eg5bQwy5vZJJJoDs/My-Demo-Website)
+
+### Setting Up the Figma MCP Server
+
+1. Generate a Figma personal access token from your [Figma account settings](https://help.figma.com/hc/en-us/articles/8085703771159-Manage-personal-access-tokens).
+
+2. Set the `FIGMA_API_KEY` environment variable with your token:
+   ```
+   export FIGMA_API_KEY=your_figma_api_key_here
+   ```
+
+3. Verify that `.vscode/mcp.json` is present and references `${FIGMA_API_KEY}` in the `--figma-api-key` argument. The MCP server will be automatically started by VS Code when using GitHub Copilot or other MCP-compatible AI assistants.
+
+3. Available MCP tools:
+   - **get_figma_data**: Fetches comprehensive Figma file data including layout, content, visuals, and component information.
+   - **download_figma_images**: Downloads SVG and PNG images used in the Figma file.
+
 ## Contributing
 Contributions are welcome! Please feel free to submit a pull request or open an issue for any enhancements or bug fixes.
 
