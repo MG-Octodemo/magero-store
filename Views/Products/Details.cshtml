@@ -2,19 +2,19 @@
 @model magero_store.Models.Product
 
 @{
-    ViewData["Title"] = Model.Name;
+    ViewData["Title"] = Model.Nombre;
     Layout = "_Layout";
 }
 
-<h1>@Model.Name</h1>
+<h1>@Model.Nombre</h1>
 
 <div>
-    <img src="@Model.ImageUrl" alt="@Model.Name" />
+    <img src="@Model.UrlImagen" alt="@Model.Nombre" />
 </div>
 
 <div>
-    <h2>Price: @Model.Price.ToString("C")</h2>
-    <p>@Model.Description</p>
+    <h2>Price: @Model.Precio.ToString("C")</h2>
+    <p>@Model.Descripcion</p>
 </div>
 
 <form asp-action="AddToCart" asp-controller="Cart">
