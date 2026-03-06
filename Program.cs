@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Identity.Web;
+using Microsoft.Identity.Web.UI;
 using magero_store.Data;
 
 public class Program
@@ -12,6 +14,15 @@ public class Program
 
         // Add services to the container
         builder.Services.AddControllersWithViews();
+
+        // Add Microsoft Identity Web authentication
+        builder.Services.AddMicrosoftIdentityWebAppAuthentication(builder.Configuration, "AzureAdB2C")
+            .EnableTokenAcquisitionToCallDownstreamApi()
+            .AddInMemoryTokenCaches();
+
+        // Add Microsoft Identity Web UI
+        builder.Services.AddRazorPages()
+            .AddMicrosoftIdentityUI();
 
         // Add distributed memory cache (required for session)
         builder.Services.AddDistributedMemoryCache();
@@ -44,12 +55,19 @@ public class Program
         app.UseHttpsRedirection();
         app.UseStaticFiles();
         app.UseRouting();
+
+        // Add authentication and authorization middleware
+        app.UseAuthentication();
         app.UseAuthorization();
+        
         app.UseSession();
 
         app.MapControllerRoute(
             name: "default",
             pattern: "{controller=Home}/{action=Index}/{id?}");
+
+        // Add Razor Pages for Microsoft Identity UI
+        app.MapRazorPages();
 
         app.Run();
     }
