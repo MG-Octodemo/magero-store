@@ -8,10 +8,26 @@
 <div class="row mb-4">
     <div class="col">
         <h1 class="display-4">Our Products</h1>
-        <form asp-action="Search" asp-controller="Products" method="get" class="mb-4">
-            <div class="input-group">
-                <input type="text" name="searchTerm" class="form-control" placeholder="Search products...">
-                <button class="btn btn-primary" type="submit">Search</button>
+        <form asp-action="Index" asp-controller="Products" method="get" class="mb-4">
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <select name="category" class="form-select" onchange="this.form.submit()">
+                        <option value="">Todas las categorías</option>
+                        @if (ViewBag.Categories != null)
+                        {
+                            @foreach (var cat in ViewBag.Categories as List<string>)
+                            {
+                                <option value="@cat" @(ViewBag.CurrentCategory == cat ? "selected" : "")>@cat</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <input type="text" name="searchTerm" class="form-control" placeholder="Buscar productos..." value="@ViewBag.CurrentSearchTerm">
+                </div>
+                <div class="col-md-2">
+                    <button class="btn btn-primary w-100" type="submit">Buscar</button>
+                </div>
             </div>
         </form>
     </div>
@@ -27,6 +43,7 @@
                 </div>
                 <div class="card-body">
                     <h5 class="card-title">@product.Name</h5>
+                    <span class="badge bg-secondary mb-2">@product.Category</span>
                     <p class="card-text text-muted">@product.Description</p>
                     <div class="mt-auto">
                         <p class="price h4 mb-3">$@product.Price.ToString("0.00")</p>
@@ -53,9 +70,6 @@
 
 @section Scripts {
     <script>
-        function filterByCategory() {
-            var category = document.getElementById('categoryFilter').value;
-            window.location.href = '/Products/Index' + (category ? '?category=' + category : '');
-        }
+        // Additional JavaScript for future enhancements can be added here
     </script>
 }
