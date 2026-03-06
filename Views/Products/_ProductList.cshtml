@@ -1,0 +1,72 @@
+@using magero_store.Models
+@using magero_store.ViewModels
+@model ProductsIndexViewModel
+
+<!-- Results Summary -->
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <p class="mb-0 text-muted">
+        @if (Model.TotalProducts == 0)
+        {
+            <span>No se encontraron productos con los filtros aplicados.</span>
+        }
+        else
+        {
+            <span>Mostrando @Model.TotalProducts producto@(Model.TotalProducts != 1 ? "s" : "")</span>
+            @if (!string.IsNullOrEmpty(Model.SearchTerm))
+            {
+                <span> para "@Model.SearchTerm"</span>
+            }
+        }
+    </p>
+</div>
+
+<!-- Products Grid -->
+@if (Model.TotalProducts > 0)
+{
+    <div class="row g-4">
+        @foreach (var product in Model.Products)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 product">
+                    <div class="card-img-wrapper">
+                        <img src="@product.ImageUrl" class="card-img-top" alt="@product.Name" />
+                    </div>
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">@product.Name</h5>
+                        <p class="card-text text-muted">@product.Description</p>
+                        <div class="mt-auto">
+                            <p class="price h4 mb-3 text-primary fw-bold">$@product.Price.ToString("0.00")</p>
+                            <form asp-action="AddToCart" asp-controller="Cart" method="post">
+                                <input type="hidden" name="productId" value="@product.Id" />
+                                <div class="input-group mb-3">
+                                    <select name="quantity" class="form-select">
+                                        @for (int i = 1; i <= 10; i++)
+                                        {
+                                            <option value="@i">@i</option>
+                                        }
+                                    </select>
+                                    <button type="submit" class="btn btn-warning">Add to Cart</button>
+                                </div>
+                            </form>
+                            <a href="@Url.Action("Details", "Products", new { id = product.Id })" 
+                               class="btn btn-primary w-100">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <div class="text-center py-5">
+        <div class="mb-3">
+            <i class="fas fa-search fa-3x text-muted"></i>
+        </div>
+        <h5 class="text-muted">No se encontraron productos</h5>
+        <p class="text-muted">Intenta ajustar los filtros o el término de búsqueda.</p>
+        <button type="button" class="btn btn-primary" id="clearFiltersFromResults">
+            Limpiar todos los filtros
+        </button>
+    </div>
+}

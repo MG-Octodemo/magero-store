@@ -3,6 +3,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using magero_store.Data;
+using magero_store.Services;
 
 public class Program
 {
@@ -27,6 +28,9 @@ public class Program
         // Add DbContext configuration
         builder.Services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+        // Register custom services
+        builder.Services.AddScoped<IProductFilterService, ProductFilterService>();
 
         var app = builder.Build();
 
