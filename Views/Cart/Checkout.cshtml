@@ -4,6 +4,7 @@
 <h2>Checkout</h2>
 
 <form asp-action="Checkout" method="post">
+    @Html.AntiForgeryToken()
     <h3>Your Cart</h3>
     <table class="table">
         <thead>
@@ -17,20 +18,23 @@
         <tbody>
             @foreach (var item in Model)
             {
-                <tr>
-                    <td>
-                        <img src="@item.Product.ImageUrl" alt="@item.Product.Name" style="width:50px;height:50px;" />
-                        @item.Product.Name
-                    </td>
-                    <td>@item.Quantity</td>
-                    <td>@item.Product.Price.ToString("C")</td>
-                    <td>@(item.Quantity * item.Product.Price).ToString("C")</td>
-                </tr>
+                @if (item.Product != null)
+                {
+                    <tr>
+                        <td>
+                            <img src="@item.Product.ImageUrl" alt="@item.Product.Name" style="width:50px;height:50px;" />
+                            @item.Product.Name
+                        </td>
+                        <td>@item.Quantity</td>
+                        <td>@item.Product.Price.ToString("C")</td>
+                        <td>@(item.Quantity * item.Product.Price).ToString("C")</td>
+                    </tr>
+                }
             }
         </tbody>
     </table>
 
-    <h4>Total: @Model.Sum(i => i.Quantity * i.Product.Price).ToString("C")</h4>
+    <h4>Total: @Model.Where(i => i.Product != null).Sum(i => i.Quantity * i.Product!.Price).ToString("C")</h4>
 
     <h3>Shipping Information</h3>
     <div class="form-group">

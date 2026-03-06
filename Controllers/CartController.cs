@@ -30,9 +30,18 @@ namespace magero_store.Controllers
         /// Agrega un producto al carrito.
         /// </summary>
         /// <param name="productId">ID del producto a agregar.</param>
+        /// <param name="quantity">Cantidad del producto a agregar (por defecto 1).</param>
         /// <returns>Redirige a la vista del carrito.</returns>
-        public IActionResult AddToCart(int productId)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult AddToCart(int productId, int quantity = 1)
         {
+            // Validar cantidad
+            if (quantity < 1 || quantity > 100)
+            {
+                quantity = 1;
+            }
+
             var product = _context.Products.Find(productId);
             if (product == null)
             {
@@ -44,11 +53,13 @@ namespace magero_store.Controllers
 
             if (cartItem == null)
             {
-                cartItems.Add(new CartItem { ProductId = productId, Quantity = 1, Product = product });
+                cartItems.Add(new CartItem { ProductId = productId, Quantity = quantity, Product = product });
             }
             else
             {
-                cartItem.Quantity++;
+                // Asegurar que la cantidad total no exceda el máximo permitido
+                int newQuantity = cartItem.Quantity + quantity;
+                cartItem.Quantity = Math.Min(newQuantity, 100);
             }
 
             SaveCartItems(cartItems);
@@ -60,6 +71,8 @@ namespace magero_store.Controllers
         /// </summary>
         /// <param name="productId">ID del producto a eliminar.</param>
         /// <returns>Redirige a la vista del carrito.</returns>
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult RemoveFromCart(int productId)
         {
             var cartItems = GetCartItems();
