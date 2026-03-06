@@ -16,17 +16,39 @@ namespace magero_store.Controllers
             _configuration = configuration;
         }
 
-        public IActionResult Index(string searchTerm)
+        /// <summary>
+        /// Muestra la lista de productos con filtrado opcional por término de búsqueda y categoría.
+        /// </summary>
+        /// <param name="searchTerm">Término de búsqueda para filtrar productos por descripción.</param>
+        /// <param name="category">Categoría para filtrar productos.</param>
+        /// <returns>Vista con la lista de productos filtrados.</returns>
+        public IActionResult Index(string searchTerm, string category)
         {
-            if(string.IsNullOrEmpty(searchTerm))
+            // Validar configuración y conexión al iniciar el método
+            if (_configuration == null)
             {
-                return View(SampleData.Products);
+                throw new InvalidOperationException("La configuración no está disponible.");
             }
 
-            // Simulate a search by filtering the in-memory list
-            var products = SampleData.Products;
-            products = products.Where(p => p.Description.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
-            return View(products);
+            var products = SampleData.Products.AsEnumerable();
+
+            // Filtrar por categoría si se especifica
+            if (!string.IsNullOrEmpty(category))
+            {
+                products = products.Where(p => p.Category.Equals(category, StringComparison.OrdinalIgnoreCase));
+            }
+
+            // Filtrar por término de búsqueda si se especifica
+            if (!string.IsNullOrEmpty(searchTerm))
+            {
+                products = products.Where(p => p.Description.Contains(searchTerm, StringComparison.OrdinalIgnoreCase));
+            }
+
+            // Obtener categorías disponibles para el dropdown
+            ViewBag.Categories = SampleData.Products.Select(p => p.Category).Distinct().OrderBy(c => c).ToList();
+            ViewBag.SelectedCategory = category;
+
+            return View(products.ToList());
         }
 
         public IActionResult Details(int id)
