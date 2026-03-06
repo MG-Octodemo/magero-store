@@ -19,18 +19,18 @@
             {
                 <tr>
                     <td>
-                        <img src="@item.Product.ImageUrl" alt="@item.Product.Name" style="width:50px;height:50px;" />
-                        @item.Product.Name
+                        <img src="@item.Product.UrlImagen" alt="@item.Product.Nombre" style="width:50px;height:50px;" />
+                        @item.Product.Nombre
                     </td>
                     <td>@item.Quantity</td>
-                    <td>@item.Product.Price.ToString("C")</td>
-                    <td>@(item.Quantity * item.Product.Price).ToString("C")</td>
+                    <td>@item.Product.Precio.ToString("C")</td>
+                    <td>@(item.Quantity * item.Product.Precio).ToString("C")</td>
                 </tr>
             }
         </tbody>
     </table>
 
-    <h4>Total: @Model.Sum(i => i.Quantity * i.Product.Price).ToString("C")</h4>
+    <h4>Total: @Model.Sum(i => i.Quantity * i.Product.Precio).ToString("C")</h4>
 
     <h3>Shipping Information</h3>
     <div class="form-group">
