@@ -1,0 +1,83 @@
+name: 🐛 Reporte de Bug
+description: Reportar un error o problema en la aplicación magero-store
+title: "[BUG]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Gracias por tomarte el tiempo de reportar un bug. Por favor completa la siguiente información para ayudarnos a resolverlo.
+  
+  - type: textarea
+    id: description
+    attributes:
+      label: Descripción del problema
+      description: Una descripción clara y concisa del bug
+      placeholder: Describe qué salió mal...
+    validations:
+      required: true
+  
+  - type: textarea
+    id: steps
+    attributes:
+      label: Pasos para reproducir
+      description: Pasos para reproducir el comportamiento
+      placeholder: |
+        1. Navegar a '...'
+        2. Hacer clic en '...'
+        3. Scrollear hasta '...'
+        4. Ver el error
+    validations:
+      required: true
+  
+  - type: textarea
+    id: expected
+    attributes:
+      label: Comportamiento esperado
+      description: Una descripción clara de lo que esperabas que sucediera
+      placeholder: Describe el comportamiento esperado...
+    validations:
+      required: true
+  
+  - type: textarea
+    id: actual
+    attributes:
+      label: Comportamiento actual
+      description: Una descripción clara de lo que realmente sucede
+      placeholder: Describe el comportamiento actual...
+    validations:
+      required: true
+  
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severidad
+      description: ¿Qué tan grave es este problema?
+      options:
+        - Crítico - La aplicación no funciona
+        - Alto - Funcionalidad importante afectada
+        - Medio - Funcionalidad menor afectada
+        - Bajo - Problema cosmético o menor
+    validations:
+      required: true
+  
+  - type: textarea
+    id: environment
+    attributes:
+      label: Entorno
+      description: Información sobre tu entorno
+      placeholder: |
+        - SO: [ej. Windows 10, macOS 12.1, Ubuntu 20.04]
+        - Navegador: [ej. Chrome 95, Firefox 94, Safari 15]
+        - Versión de .NET: [ej. .NET 8.0]
+    validations:
+      required: false
+  
+  - type: textarea
+    id: additional
+    attributes:
+      label: Información adicional
+      description: Cualquier otra información relevante (capturas de pantalla, logs, etc.)
+      placeholder: Agrega cualquier contexto adicional aquí...
+    validations:
+      required: false

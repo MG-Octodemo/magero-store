@@ -1,0 +1,52 @@
+name: 🧪 Issue de Prueba
+description: Crear un issue de prueba para verificar el sistema de gestión
+title: "[TEST]: "
+labels: ["testing", "verification"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Plantilla para crear issues de prueba y verificación del sistema.
+  
+  - type: textarea
+    id: objective
+    attributes:
+      label: Objetivo de la prueba
+      description: Describe qué aspecto del sistema estás verificando
+      placeholder: |
+        - Verificar que los issues se crean correctamente
+        - Probar la funcionalidad de etiquetas
+        - Validar la integración con workflows
+    validations:
+      required: true
+  
+  - type: checkboxes
+    id: tasks
+    attributes:
+      label: Tareas de verificación
+      description: Marca las tareas a realizar
+      options:
+        - label: Crear el issue
+        - label: Verificar que aparece en la lista de issues
+        - label: Añadir comentarios
+        - label: Verificar etiquetas
+        - label: Probar workflows si aplica
+        - label: Cerrar el issue una vez completada la verificación
+  
+  - type: textarea
+    id: results
+    attributes:
+      label: Resultados esperados
+      description: Describe los resultados que esperas obtener
+      placeholder: El sistema debería...
+    validations:
+      required: true
+  
+  - type: textarea
+    id: notes
+    attributes:
+      label: Notas adicionales
+      description: Cualquier información adicional sobre la prueba
+      placeholder: Agrega notas o contexto adicional...
+    validations:
+      required: false
