@@ -43,7 +43,9 @@
                             </div>
                         </form>
                         <a href="@Url.Action("Details", "Products", new { id = product.Id })" 
-                           class="btn btn-primary w-100">View Details</a>
+                           class="btn btn-primary w-100 mb-2">View Details</a>
+                        <a href="@Url.Action("Compare", "Products", new { id1 = product.Id })"
+                           class="btn btn-outline-secondary w-100">Compare</a>
                     </div>
                 </div>
             </div>
