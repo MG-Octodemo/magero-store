@@ -1076,6 +1076,11 @@ $.extend( $.validator, {
 		},
 
 		validationTargetFor: function( element ) {
+			var $element;
+
+			if ( !element ) {
+				return undefined;
+			}
 
 			// If radio/checkbox, validate first element in group instead
 			if ( this.checkable( element ) ) {
@@ -1083,7 +1088,12 @@ $.extend( $.validator, {
 			}
 
 			// Always apply ignore filter
-			return $( element ).not( this.settings.ignore )[ 0 ];
+			// Do not pass raw strings to $(), which may be interpreted as HTML.
+			if ( typeof element === "string" ) {
+				return undefined;
+			}
+			$element = element.jquery ? element : $( element );
+			return $element.not( this.settings.ignore )[ 0 ];
 		},
 
 		checkable: function( element ) {
