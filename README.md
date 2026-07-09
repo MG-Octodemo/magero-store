@@ -82,7 +82,8 @@ This project includes a Figma MCP (Model Context Protocol) server configuration 
 
 3. Verify that `.vscode/mcp.json` is present and references `${FIGMA_API_KEY}` in the `--figma-api-key` argument. The MCP server will be automatically started by VS Code when using GitHub Copilot or other MCP-compatible AI assistants.
 
-3. Available MCP tools:
+
+4. Available MCP tools:
    - **get_figma_data**: Fetches comprehensive Figma file data including layout, content, visuals, and component information.
    - **download_figma_images**: Downloads SVG and PNG images used in the Figma file.
 
