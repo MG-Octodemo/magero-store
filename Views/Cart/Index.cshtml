@@ -22,11 +22,11 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-2">
-                                <img src="@item.Product.ImageUrl" class="img-fluid" alt="@item.Product.Name" />
+                                <img src="@item.Product.UrlImagen" class="img-fluid" alt="@item.Product.Nombre" />
                             </div>
                             <div class="col-md-10">
-                                <h5 class="card-title">@item.Product.Name</h5>
-                                <p class="card-text">Price: @item.Product.Price.ToString("C")</p>
+                                <h5 class="card-title">@item.Product.Nombre</h5>
+                                <p class="card-text">Price: @item.Product.Precio.ToString("C")</p>
                                 <p class="card-text">Quantity: @item.Quantity</p>
                                 <form asp-action="RemoveFromCart" asp-controller="Cart" method="post" class="d-inline">
                                     <input type="hidden" name="productId" value="@item.ProductId" />
@@ -40,7 +40,7 @@
             <div class="cart-summary card">
                 <div class="card-body">
                     <h5 class="card-title">Cart Summary</h5>
-                    <p class="card-text">Total: @Model.Sum(i => i.Quantity * i.Product.Price).ToString("C")</p>
+                    <p class="card-text">Total: @Model.Sum(i => i.Quantity * i.Product.Precio).ToString("C")</p>
                     <a href="#" class="btn btn-success">Proceed to Checkout</a>
                 </div>
             </div>
