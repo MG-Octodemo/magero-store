@@ -14,6 +14,21 @@
                 <button class="btn btn-primary" type="submit">Search</button>
             </div>
         </form>
+        <div class="mb-4">
+            <div class="input-group">
+                <label class="input-group-text" for="categoryFilter">Category</label>
+                <select id="categoryFilter" name="category" class="form-select" onchange="filterByCategory()">
+                    <option value="">All Categories</option>
+                    @if (ViewBag.Categories != null)
+                    {
+                        @foreach (var category in ViewBag.Categories)
+                        {
+                            <option value="@category" @(ViewBag.SelectedCategory == category ? "selected" : "")>@category</option>
+                        }
+                    }
+                </select>
+            </div>
+        </div>
     </div>
 </div>
 
