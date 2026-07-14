@@ -8,12 +8,32 @@
 <div class="row mb-4">
     <div class="col">
         <h1 class="display-4">Our Products</h1>
-        <form asp-action="Search" asp-controller="Products" method="get" class="mb-4">
-            <div class="input-group">
-                <input type="text" name="searchTerm" class="form-control" placeholder="Search products...">
-                <button class="btn btn-primary" type="submit">Search</button>
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <form asp-action="Index" asp-controller="Products" method="get" class="mb-3">
+                    <div class="input-group">
+                        <input type="text" name="searchTerm" class="form-control" placeholder="Search products..." value="@ViewBag.SearchTerm">
+                        <input type="hidden" name="category" value="@ViewBag.SelectedCategory" />
+                        <button class="btn btn-primary" type="submit">Search</button>
+                    </div>
+                </form>
             </div>
-        </form>
+            <div class="col-md-6">
+                <form asp-action="Index" asp-controller="Products" method="get">
+                    <div class="input-group">
+                        <label class="input-group-text" for="categoryFilter">Category</label>
+                        <select id="categoryFilter" name="category" class="form-select" onchange="this.form.submit()">
+                            <option value="">All Categories</option>
+                            @foreach (var categoryOption in ViewBag.Categories)
+                            {
+                                <option value="@categoryOption" @(ViewBag.SelectedCategory == categoryOption ? "selected" : "")>@categoryOption</option>
+                            }
+                        </select>
+                        <input type="hidden" name="searchTerm" value="@ViewBag.SearchTerm" />
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -52,10 +72,4 @@
 </div>
 
 @section Scripts {
-    <script>
-        function filterByCategory() {
-            var category = document.getElementById('categoryFilter').value;
-            window.location.href = '/Products/Index' + (category ? '?category=' + category : '');
-        }
-    </script>
 }
