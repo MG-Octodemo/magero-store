@@ -9,6 +9,22 @@
 <div class="row mb-4">
     <div class="col">
         <h1 class="display-4">Shopping Cart</h1>
+        
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                @TempData["ErrorMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+        
+        @if (TempData["WarningMessage"] != null)
+        {
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                @TempData["WarningMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
     </div>
 </div>
 
@@ -22,15 +38,22 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-2">
-                                <img src="@item.Product.ImageUrl" class="img-fluid" alt="@item.Product.Name" />
+                                @if (item.Product != null)
+                                {
+                                    <img src="@item.Product.ImageUrl" class="img-fluid" alt="@item.Product.Name" />
+                                }
                             </div>
                             <div class="col-md-10">
-                                <h5 class="card-title">@item.Product.Name</h5>
-                                <p class="card-text">Price: @item.Product.Price.ToString("C")</p>
+                                @if (item.Product != null)
+                                {
+                                    <h5 class="card-title">@item.Product.Name</h5>
+                                    <p class="card-text">Price: @item.Product.Price.ToString("C")</p>
+                                }
                                 <p class="card-text">Quantity: @item.Quantity</p>
-                                <form asp-action="RemoveFromCart" asp-controller="Cart" method="post" class="d-inline">
+                                <form action="/Cart/RemoveFromCart" method="post" class="d-inline">
+                                    @Html.AntiForgeryToken()
                                     <input type="hidden" name="productId" value="@item.ProductId" />
-                                    <button type="submit" class="btn btn-danger">Remove</button>
+                                    <button type="submit" class="btn btn-danger btn-sm">Remove</button>
                                 </form>
                             </div>
                         </div>
@@ -40,7 +63,7 @@
             <div class="cart-summary card">
                 <div class="card-body">
                     <h5 class="card-title">Cart Summary</h5>
-                    <p class="card-text">Total: @Model.Sum(i => i.Quantity * i.Product.Price).ToString("C")</p>
+                    <p class="card-text">Total: @Model.Where(i => i.Product != null).Sum(i => i.Quantity * i.Product!.Price).ToString("C")</p>
                     <a href="#" class="btn btn-success">Proceed to Checkout</a>
                 </div>
             </div>

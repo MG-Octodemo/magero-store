@@ -17,11 +17,14 @@
     <p>@Model.Description</p>
 </div>
 
-<form asp-action="AddToCart" asp-controller="Cart">
+<form action="/Cart/AddToCart" method="post">
+    @Html.AntiForgeryToken()
     <input type="hidden" name="productId" value="@Model.Id" />
-    <label for="quantity">Quantity:</label>
-    <input type="number" name="quantity" id="quantity" value="1" min="1" />
-    <button type="submit">Add to Cart</button>
+    <div class="form-group">
+        <label for="quantity">Quantity:</label>
+        <input type="number" name="quantity" id="quantity" value="1" min="1" max="100" class="form-control" style="width: 100px; display: inline-block;" />
+    </div>
+    <button type="submit" class="btn btn-primary">Add to Cart</button>
 </form>
 
 <a asp-controller="Products" asp-action="Index">Back to Products</a>
