@@ -1,0 +1,58 @@
+name: ✨ Solicitud de Funcionalidad
+description: Sugerir una nueva funcionalidad para magero-store
+title: "[FEATURE]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Gracias por sugerir una nueva funcionalidad. Por favor describe tu idea a continuación.
+  
+  - type: textarea
+    id: problem
+    attributes:
+      label: ¿Qué problema resuelve esta funcionalidad?
+      description: Una descripción clara del problema que esta funcionalidad resolvería
+      placeholder: Actualmente es frustrante cuando...
+    validations:
+      required: true
+  
+  - type: textarea
+    id: solution
+    attributes:
+      label: Solución propuesta
+      description: Una descripción clara de la funcionalidad que te gustaría ver
+      placeholder: Me gustaría que la aplicación pudiera...
+    validations:
+      required: true
+  
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternativas consideradas
+      description: Describe cualquier solución o funcionalidad alternativa que hayas considerado
+      placeholder: También consideré...
+    validations:
+      required: false
+  
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Prioridad
+      description: ¿Qué tan importante es esta funcionalidad para ti?
+      options:
+        - Crítica - Bloqueante para mi uso
+        - Alta - Muy importante
+        - Media - Sería útil tenerla
+        - Baja - Agradable tenerla
+    validations:
+      required: true
+  
+  - type: textarea
+    id: additional
+    attributes:
+      label: Contexto adicional
+      description: Cualquier otra información o capturas de pantalla sobre la solicitud
+      placeholder: Agrega cualquier contexto adicional aquí...
+    validations:
+      required: false
