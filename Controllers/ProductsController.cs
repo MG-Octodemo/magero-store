@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using magero_store.Models;
 using magero_store.Data;
+using magero_store.ViewModels;
 using Microsoft.Data.SqlClient;  // Changed from System.Data.SqlClient
 using Dapper;
 using System.Linq;
@@ -37,6 +38,18 @@ namespace magero_store.Controllers
                 return NotFound();
             }
             return View(product);
+        }
+
+        public IActionResult Compare(int? id1, int? id2)
+        {
+            var allProducts = SampleData.Products;
+            var viewModel = new CompareViewModel
+            {
+                AllProducts = allProducts,
+                Product1 = id1.HasValue ? allProducts.FirstOrDefault(p => p.Id == id1.Value) : null,
+                Product2 = id2.HasValue ? allProducts.FirstOrDefault(p => p.Id == id2.Value) : null
+            };
+            return View(viewModel);
         }
 
         // WARNING: This is deliberately vulnerable to SQL injection!

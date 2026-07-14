@@ -1,0 +1,117 @@
+@using magero_store.ViewModels
+@model CompareViewModel
+@{
+    ViewData["Title"] = "Compare Products";
+    Layout = "_Layout";
+}
+
+<div class="row mb-4">
+    <div class="col">
+        <h1 class="display-4">Compare Products</h1>
+    </div>
+</div>
+
+<form method="get" asp-action="Compare" asp-controller="Products" class="card p-4 mb-4 bg-light">
+    <div class="row g-3 align-items-end">
+        <div class="col-md-5">
+            <label class="form-label fw-semibold">Product 1</label>
+            <select name="id1" class="form-select">
+                <option value="">-- Select a product --</option>
+                @foreach (var p in Model.AllProducts)
+                {
+                    <option value="@p.Id" @(Model.Product1 != null && Model.Product1.Id == p.Id ? "selected" : "")>@p.Name ($@p.Price.ToString("0.00"))</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-5">
+            <label class="form-label fw-semibold">Product 2</label>
+            <select name="id2" class="form-select">
+                <option value="">-- Select a product --</option>
+                @foreach (var p in Model.AllProducts)
+                {
+                    <option value="@p.Id" @(Model.Product2 != null && Model.Product2.Id == p.Id ? "selected" : "")>@p.Name ($@p.Price.ToString("0.00"))</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary w-100">Compare</button>
+        </div>
+    </div>
+</form>
+
+@if (Model.Product1 != null && Model.Product2 != null)
+{
+    <div class="table-responsive">
+        <table class="table table-bordered align-middle text-center">
+            <thead class="table-dark">
+                <tr>
+                    <th style="width:20%">Feature</th>
+                    <th style="width:40%">@Model.Product1.Name</th>
+                    <th style="width:40%">@Model.Product2.Name</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="fw-semibold">Image</td>
+                    <td>
+                        <img src="@Model.Product1.ImageUrl" alt="@Model.Product1.Name"
+                             class="img-fluid rounded" style="max-height:180px; object-fit:cover;" />
+                    </td>
+                    <td>
+                        <img src="@Model.Product2.ImageUrl" alt="@Model.Product2.Name"
+                             class="img-fluid rounded" style="max-height:180px; object-fit:cover;" />
+                    </td>
+                </tr>
+                <tr>
+                    <td class="fw-semibold">Name</td>
+                    <td>@Model.Product1.Name</td>
+                    <td>@Model.Product2.Name</td>
+                </tr>
+                <tr>
+                    <td class="fw-semibold">Price</td>
+                    @{
+                        var cheaper = Model.Product1.Price <= Model.Product2.Price ? 1 : 2;
+                    }
+                    <td class="@(cheaper == 1 ? "table-success fw-bold" : "")">
+                        $@Model.Product1.Price.ToString("0.00")
+                        @if (cheaper == 1) { <span class="badge bg-success ms-1">Best Price</span> }
+                    </td>
+                    <td class="@(cheaper == 2 ? "table-success fw-bold" : "")">
+                        $@Model.Product2.Price.ToString("0.00")
+                        @if (cheaper == 2) { <span class="badge bg-success ms-1">Best Price</span> }
+                    </td>
+                </tr>
+                <tr>
+                    <td class="fw-semibold">Description</td>
+                    <td>@Model.Product1.Description</td>
+                    <td>@Model.Product2.Description</td>
+                </tr>
+                <tr>
+                    <td class="fw-semibold">Actions</td>
+                    <td>
+                        <a href="@Url.Action("Details", "Products", new { id = Model.Product1.Id })"
+                           class="btn btn-outline-primary btn-sm me-1">View Details</a>
+                        <form asp-action="AddToCart" asp-controller="Cart" method="post" class="d-inline">
+                            <input type="hidden" name="productId" value="@Model.Product1.Id" />
+                            <input type="hidden" name="quantity" value="1" />
+                            <button type="submit" class="btn btn-warning btn-sm">Add to Cart</button>
+                        </form>
+                    </td>
+                    <td>
+                        <a href="@Url.Action("Details", "Products", new { id = Model.Product2.Id })"
+                           class="btn btn-outline-primary btn-sm me-1">View Details</a>
+                        <form asp-action="AddToCart" asp-controller="Cart" method="post" class="d-inline">
+                            <input type="hidden" name="productId" value="@Model.Product2.Id" />
+                            <input type="hidden" name="quantity" value="1" />
+                            <button type="submit" class="btn btn-warning btn-sm">Add to Cart</button>
+                        </form>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+}
+else if (Model.Product1 != null || Model.Product2 != null)
+{
+    <div class="alert alert-info">Please select both products to compare.</div>
+}
