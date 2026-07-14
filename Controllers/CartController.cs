@@ -7,13 +7,20 @@ using magero_store.Data;
 
 namespace magero_store.Controllers
 {
+    /// <summary>
+    /// Controlador para gestionar las operaciones del carrito de compras.
+    /// </summary>
     public class CartController : Controller
     {
-        private readonly Data.ApplicationDbContext _context;
+        private readonly ApplicationDbContext _context;
 
-        public CartController(Data.ApplicationDbContext context)
+        /// <summary>
+        /// Constructor que inyecta el contexto de base de datos.
+        /// </summary>
+        /// <param name="context">Contexto de la base de datos.</param>
+        public CartController(ApplicationDbContext context)
         {
-            _context = context;
+            _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
         /// <summary>
@@ -33,6 +40,12 @@ namespace magero_store.Controllers
         /// <returns>Redirige a la vista del carrito.</returns>
         public IActionResult AddToCart(int productId)
         {
+            // Validar que el ID sea positivo
+            if (productId <= 0)
+            {
+                return BadRequest("ID de producto inválido.");
+            }
+
             var product = _context.Products.Find(productId);
             if (product == null)
             {
@@ -62,6 +75,12 @@ namespace magero_store.Controllers
         /// <returns>Redirige a la vista del carrito.</returns>
         public IActionResult RemoveFromCart(int productId)
         {
+            // Validar que el ID sea positivo
+            if (productId <= 0)
+            {
+                return BadRequest("ID de producto inválido.");
+            }
+
             var cartItems = GetCartItems();
             var cartItem = cartItems.FirstOrDefault(ci => ci.ProductId == productId);
 
