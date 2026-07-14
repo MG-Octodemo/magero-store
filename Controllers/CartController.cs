@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using magero_store.Models;
 using System.Collections.Generic;
 using System.Linq;
@@ -76,8 +77,10 @@ namespace magero_store.Controllers
 
         /// <summary>
         /// Muestra la página de checkout con los elementos actuales del carrito.
+        /// Requiere autenticación para proceder con la compra.
         /// </summary>
         /// <returns>Vista de checkout.</returns>
+        [Authorize]
         public IActionResult Checkout()
         {
             var cartItems = GetCartItems();

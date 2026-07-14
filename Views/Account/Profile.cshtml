@@ -1,0 +1,115 @@
+@model magero_store.Models.User
+@{
+    ViewData["Title"] = "Mi Perfil";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h4><i class="bi bi-person-circle"></i> Mi Perfil</h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label"><strong>Nombre para mostrar:</strong></label>
+                            <p class="form-control-plaintext">@Model.DisplayName</p>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label"><strong>Correo electrónico:</strong></label>
+                            <p class="form-control-plaintext">@Model.Email</p>
+                        </div>
+                        
+                        @if (!string.IsNullOrEmpty(Model.GivenName))
+                        {
+                            <div class="mb-3">
+                                <label class="form-label"><strong>Nombre:</strong></label>
+                                <p class="form-control-plaintext">@Model.GivenName</p>
+                            </div>
+                        }
+                        
+                        @if (!string.IsNullOrEmpty(Model.Surname))
+                        {
+                            <div class="mb-3">
+                                <label class="form-label"><strong>Apellido:</strong></label>
+                                <p class="form-control-plaintext">@Model.Surname</p>
+                            </div>
+                        }
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label"><strong>Autenticación de Doble Factor:</strong></label>
+                            <div class="d-flex align-items-center">
+                                @if (Model.TwoFactorEnabled)
+                                {
+                                    <span class="badge bg-success me-2">
+                                        <i class="bi bi-check-circle"></i> Activado
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-warning me-2">
+                                        <i class="bi bi-exclamation-triangle"></i> Desactivado
+                                    </span>
+                                }
+                            </div>
+                            <small class="text-muted">La autenticación de doble factor es gestionada por Entra ID External Identities.</small>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label"><strong>Fecha de registro:</strong></label>
+                            <p class="form-control-plaintext">@Model.CreatedAt.ToString("dd/MM/yyyy HH:mm")</p>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label"><strong>Último acceso:</strong></label>
+                            <p class="form-control-plaintext">@Model.LastLoginAt.ToString("dd/MM/yyyy HH:mm")</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <hr>
+                
+                <div class="row">
+                    <div class="col-12">
+                        <h5>Gestión de Cuenta</h5>
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+                            <a href="https://yourtenant.b2clogin.com/yourtenant.onmicrosoft.com/B2C_1_profileedit/oauth2/v2.0/authorize" 
+                               class="btn btn-primary me-md-2" target="_blank">
+                                <i class="bi bi-pencil"></i> Editar Perfil
+                            </a>
+                            <a href="https://yourtenant.b2clogin.com/yourtenant.onmicrosoft.com/B2C_1_passwordreset/oauth2/v2.0/authorize" 
+                               class="btn btn-outline-secondary" target="_blank">
+                                <i class="bi bi-key"></i> Cambiar Contraseña
+                            </a>
+                        </div>
+                        <small class="text-muted d-block mt-2">
+                            Estas opciones te redirigirán al portal de gestión de Entra ID para realizar cambios en tu cuenta.
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Información de seguridad -->
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5><i class="bi bi-shield-check"></i> Información de Seguridad</h5>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info" role="alert">
+                    <h6><i class="bi bi-info-circle"></i> Autenticación de Doble Factor</h6>
+                    <p class="mb-2">Tu cuenta está protegida con autenticación de doble factor gestionada por Microsoft Entra ID External Identities.</p>
+                    <ul class="mb-0">
+                        <li>Utiliza una aplicación autenticadora como Microsoft Authenticator o Google Authenticator</li>
+                        <li>El 2FA es obligatorio para operaciones sensibles como el checkout</li>
+                        <li>Tus credenciales están protegidas por los estándares de seguridad de Microsoft</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
