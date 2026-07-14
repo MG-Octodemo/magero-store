@@ -1,5 +1,6 @@
 @using magero_store.Models
-@model IEnumerable<Product>
+@using magero_store.ViewModels
+@model ProductsIndexViewModel
 @{
     ViewData["Title"] = "Products";
     Layout = "_Layout";
@@ -8,54 +9,108 @@
 <div class="row mb-4">
     <div class="col">
         <h1 class="display-4">Our Products</h1>
-        <form asp-action="Search" asp-controller="Products" method="get" class="mb-4">
+        <form asp-action="Index" asp-controller="Products" method="get" class="mb-4" id="searchForm">
             <div class="input-group">
-                <input type="text" name="searchTerm" class="form-control" placeholder="Search products...">
+                <input type="text" name="searchTerm" value="@Model.SearchTerm" class="form-control" placeholder="Search products...">
                 <button class="btn btn-primary" type="submit">Search</button>
             </div>
         </form>
     </div>
 </div>
 
-<div class="row g-4">
-    @foreach (var product in Model)
-    {
-        <div class="col-md-3">
-            <div class="card h-100 product">
-                <div class="card-img-wrapper">
-                    <img src="@product.ImageUrl" class="card-img-top" alt="@product.Name" />
-                </div>
-                <div class="card-body">
-                    <h5 class="card-title">@product.Name</h5>
-                    <p class="card-text text-muted">@product.Description</p>
-                    <div class="mt-auto">
-                        <p class="price h4 mb-3">$@product.Price.ToString("0.00")</p>
-                        <form asp-action="AddToCart" asp-controller="Cart" method="post">
-                            <input type="hidden" name="productId" value="@product.Id" />
-                            <div class="input-group mb-3">
-                                <select name="quantity" class="form-select">
-                                    @for (int i = 1; i <= 10; i++)
-                                    {
-                                        <option value="@i">@i</option>
-                                    }
-                                </select>
-                                <button type="submit" class="btn btn-warning">Add to Cart</button>
-                            </div>
-                        </form>
-                        <a href="@Url.Action("Details", "Products", new { id = product.Id })" 
-                           class="btn btn-primary w-100">View Details</a>
+<div class="row">
+    <!-- Price Filter Panel -->
+    <div class="col-md-3 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">🔍 Filtros de Precio</h5>
+            </div>
+            <div class="card-body">
+                <form id="priceFilterForm">
+                    <input type="hidden" name="searchTerm" value="@Model.SearchTerm" />
+                    
+                    <!-- Predefined Price Ranges -->
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Rangos Predefinidos:</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="priceRange" value="@((int)PriceRange.All)" 
+                                   id="priceAll" @(Model.SelectedPriceRange == PriceRange.All ? "checked" : "")>
+                            <label class="form-check-label" for="priceAll">Todos los precios</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="priceRange" value="@((int)PriceRange.Under500)" 
+                                   id="priceUnder500" @(Model.SelectedPriceRange == PriceRange.Under500 ? "checked" : "")>
+                            <label class="form-check-label" for="priceUnder500">Menos de $500</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="priceRange" value="@((int)PriceRange.Range500To999)" 
+                                   id="price500To999" @(Model.SelectedPriceRange == PriceRange.Range500To999 ? "checked" : "")>
+                            <label class="form-check-label" for="price500To999">$500 - $999</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="priceRange" value="@((int)PriceRange.Range1000To1999)" 
+                                   id="price1000To1999" @(Model.SelectedPriceRange == PriceRange.Range1000To1999 ? "checked" : "")>
+                            <label class="form-check-label" for="price1000To1999">$1,000 - $1,999</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="priceRange" value="@((int)PriceRange.Range2000To4999)" 
+                                   id="price2000To4999" @(Model.SelectedPriceRange == PriceRange.Range2000To4999 ? "checked" : "")>
+                            <label class="form-check-label" for="price2000To4999">$2,000 - $4,999</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="priceRange" value="@((int)PriceRange.Over5000)" 
+                                   id="priceOver5000" @(Model.SelectedPriceRange == PriceRange.Over5000 ? "checked" : "")>
+                            <label class="form-check-label" for="priceOver5000">$5,000 o más</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="priceRange" value="@((int)PriceRange.Custom)" 
+                                   id="priceCustom" @(Model.SelectedPriceRange == PriceRange.Custom ? "checked" : "")>
+                            <label class="form-check-label" for="priceCustom">Rango personalizado</label>
+                        </div>
                     </div>
-                </div>
+
+                    <!-- Custom Price Range -->
+                    <div id="customPriceRange" class="@(Model.SelectedPriceRange == PriceRange.Custom ? "" : "d-none")">
+                        <div class="mb-2">
+                            <label for="minPrice" class="form-label">Precio mínimo:</label>
+                            <input type="number" class="form-control" id="minPrice" name="minPrice" 
+                                   value="@Model.CustomMinPrice" placeholder="0.00" step="0.01" min="0">
+                        </div>
+                        <div class="mb-3">
+                            <label for="maxPrice" class="form-label">Precio máximo:</label>
+                            <input type="number" class="form-control" id="maxPrice" name="maxPrice" 
+                                   value="@Model.CustomMaxPrice" placeholder="10000.00" step="0.01" min="0">
+                        </div>
+                    </div>
+
+                    <!-- Filter Buttons -->
+                    <div class="d-grid gap-2">
+                        <button type="button" class="btn btn-primary" id="applyFiltersBtn">
+                            Aplicar Filtros
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary" id="clearFiltersBtn">
+                            Limpiar Filtros
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
-    }
+    </div>
+
+    <!-- Products List -->
+    <div class="col-md-9">
+        <div id="loading-indicator" class="text-center d-none">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Cargando...</span>
+            </div>
+        </div>
+        
+        <div id="productList">
+            @await Html.PartialAsync("_ProductList", Model)
+        </div>
+    </div>
 </div>
 
 @section Scripts {
-    <script>
-        function filterByCategory() {
-            var category = document.getElementById('categoryFilter').value;
-            window.location.href = '/Products/Index' + (category ? '?category=' + category : '');
-        }
-    </script>
+    <script src="~/js/product-filters.js"></script>
 }
