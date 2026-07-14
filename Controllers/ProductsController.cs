@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using magero_store.Models;
 using magero_store.Data;
-using Microsoft.Data.SqlClient;  // Changed from System.Data.SqlClient
+using Microsoft.Data.Sqlite;  // Cambiado a SQLite para compatibilidad con la configuración de la aplicación
 using Dapper;
 using System.Linq;
 
@@ -39,16 +39,53 @@ namespace magero_store.Controllers
             return View(product);
         }
 
-        // WARNING: This is deliberately vulnerable to SQL injection!
+        /// <summary>
+        /// Realiza una búsqueda segura de productos en la base de datos SQLite.
+        /// Valida la entrada del usuario y utiliza parámetros SQL para prevenir inyección SQL.
+        /// </summary>
+        /// <param name="searchTerm">Término de búsqueda. Debe tener entre 1 y 100 caracteres.</param>
+        /// <returns>Vista con los productos que coinciden con el término de búsqueda, o vista de error en caso de fallo.</returns>
         public IActionResult Search(string searchTerm)
         {
-            using (var connection = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
+            // Validación de entrada para prevenir ataques maliciosos
+            if (string.IsNullOrWhiteSpace(searchTerm))
             {
-                connection.Open();
-                // Vulnerable code: Direct string concatenation in SQL query
-                var sql = "SELECT * FROM Products WHERE Name LIKE @SearchTerm OR Description LIKE @SearchTerm";
-                var products = connection.Query<Product>(sql, new { SearchTerm = "%" + searchTerm + "%" }).ToList();
-                return View("Index", products);
+                // Si no hay término de búsqueda, mostrar todos los productos desde SampleData
+                return View("Index", SampleData.Products);
+            }
+
+            // Validar longitud máxima para prevenir ataques de denegación de servicio
+            if (searchTerm.Length > 100)
+            {
+                ModelState.AddModelError("searchTerm", "El término de búsqueda no puede exceder 100 caracteres.");
+                return View("Index", SampleData.Products);
+            }
+
+            try
+            {
+                // Usar SQLiteConnection en lugar de SqlConnection para compatibilidad con la configuración
+                using (var connection = new SqliteConnection(_configuration.GetConnectionString("DefaultConnection")))
+                {
+                    connection.Open();
+                    
+                    // Consulta SQL segura usando parámetros - previene inyección SQL
+                    var sql = "SELECT * FROM Products WHERE Name LIKE @SearchTerm OR Description LIKE @SearchTerm";
+                    
+                    // Usar parámetros de Dapper para consulta segura
+                    var products = connection.Query<Product>(sql, new { SearchTerm = "%" + searchTerm + "%" }).ToList();
+                    
+                    return View("Index", products);
+                }
+            }
+            catch (Exception ex)
+            {
+                // Logging del error para debugging (sin exponer información sensible al usuario)
+                // En un entorno de producción, usar un logger apropiado como ILogger
+                Console.WriteLine($"Error en búsqueda de productos: {ex.Message}");
+                
+                // En caso de error, retornar datos de SampleData como fallback
+                ModelState.AddModelError("", "Error al realizar la búsqueda. Mostrando productos de ejemplo.");
+                return View("Index", SampleData.Products);
             }
         }
     }
